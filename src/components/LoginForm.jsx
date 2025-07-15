@@ -23,19 +23,21 @@ const handleSubmit = async (e) => {
 
     switch (rol.toLowerCase()) {
       case 'administrador':
-        navigate('/admin/dashboard');
+        navigate('/admin');
         break;
       case 'paciente':
-        navigate('/usuario/inicio');
+        navigate('/paciente');
         break;
       case 'recepcionista':
-        navigate('/recepcion/inicio');
+        navigate('/recepcionista');
         break;
+        case 'medico':
+          navigate('/medico')
       default:
-        setMensaje('Rol desconocido');
+        setMensaje('Este rol no coincide');
     }
   } catch (error) {
-    console.error('❌ Error de login con Firebase:', error);
+    console.error('❌ Error de Inicio de Sesion:', error);
     setMensaje('Credenciales incorrectas o usuario no registrado');
   } finally {
     setIsSubmitting(false);

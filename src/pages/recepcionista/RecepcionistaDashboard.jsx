@@ -148,7 +148,7 @@
                {!isMobile && (
                  <div className="flex items-center">
                    <FaUserCircle size={20} className="text-pink-600 md:size-[24px]" />
-                   <span className="ml-2 font-medium hidden md:inline">Administrador</span>
+                   <span className="ml-2 font-medium hidden md:inline">Recepcionista</span>
                  </div>
                )}
              </div>
