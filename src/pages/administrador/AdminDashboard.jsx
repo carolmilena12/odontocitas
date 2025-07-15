@@ -5,7 +5,7 @@ import {
   FaSearch, FaBell, FaUserCircle, FaHome,
   FaTooth, FaClinicMedical, FaFileInvoiceDollar
 } from "react-icons/fa";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logodentista.jpeg";
 import InicioAdmin from "./components/InicioAdmin";
 import PacientesAdmin from "./components/PacientesAdmin";
 import DoctoresAdmin from "./components/DoctoresAdmin";
