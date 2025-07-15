@@ -5,7 +5,7 @@ import {
   FaSearch, FaBell, FaUserCircle, FaHome,
   FaTooth, FaClinicMedical, FaFileInvoiceDollar
 } from "react-icons/fa";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logodentista.jpeg";
 import CitasUsuario from "../usuario/componentes/CitasUsuario";
 import DoctoresUsuario from "./componentes/DoctoresUsuario";
  const UsuarioDashboard = () => {
@@ -28,7 +28,6 @@ import DoctoresUsuario from "./componentes/DoctoresUsuario";
  
    // Menú items con sus iconos adaptados a clínica dental
    const menuItems = [
-     { name: "Inicio", icon: <FaHome />, component: <InicioComponent /> },
      { name: "Doctores", icon: <FaUserMd />, component: <DoctoresUsuario /> },
      { name: "Citas", icon: <FaCalendarAlt />, component: <CitasUsuario /> },
      { name: "Clínicas", icon: <FaClinicMedical />, component: <ClinicasComponent /> },

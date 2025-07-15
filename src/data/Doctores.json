@@ -1,0 +1,21 @@
+[
+  {
+    "id": 1,
+    "nombre": "Zulma Apaza Vidal",
+    "especialidad": "Odontologa General,Endodoncia, Limpieza Dental, Extracciones, empastes, ortodoncia, protesis, implantes, cirugia bucal",
+    "imagen": "https://placehold.co/320x240?text=Dr.+Juan+Pérez"
+  },
+  {
+    "id": 2,
+    "nombre": "Dra. Ana Gómez",
+    "especialidad": "Odontologa General,Endodoncia, Limpieza Dental, Extracciones, empastes, ortodoncia, protesis, implantes, cirugia bucal",
+    "imagen": "https://placehold.co/320x240?text=Dra.+Ana+Gómez"
+  },
+  {
+    "id": 3,
+    "nombre": "Dra Tania Torrico Guzman",
+    "especialidad": "Odontologa General,Endodoncia, Limpieza Dental, Extracciones, empastes, ortodoncia, protesis, implantes, cirugia bucal",
+    "imagen": "https://placehold.co/320x240?text=Dra.+Tania+Torrico+Guzman"
+  }
+]
+

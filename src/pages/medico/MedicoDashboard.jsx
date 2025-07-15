@@ -5,7 +5,7 @@
    FaSearch, FaBell, FaUserCircle, FaHome,
    FaTooth, FaClinicMedical, FaFileInvoiceDollar
  } from "react-icons/fa";
- import logo from "../../assets/logo.png"; // Asegúrate de tener un logo adecuado
+ import logo from "../../assets/logodentista.jpeg"; // Asegúrate de tener un logo adecuado
  
  const MedicoDashboard = () => {
    const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -32,7 +32,6 @@
      { name: "Doctores", icon: <FaUserMd />, component: <DoctoresComponent /> },
      { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosComponent /> },
      { name: "Citas", icon: <FaCalendarAlt />, component: <CitasComponent /> },
-     { name: "Finanzas", icon: <FaFileInvoiceDollar />, component: <FinanzasComponent /> },
      { name: "Clínicas", icon: <FaClinicMedical />, component: <ClinicasComponent /> },
    ];
  
