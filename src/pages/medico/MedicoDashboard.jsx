@@ -11,7 +11,6 @@ import PacientesComponent from "./PacientesComponent";
 import DoctoresComponent from "./DoctoresComponent";
 import TratamientosComponent from "./TratamientosComponent";
 import CitasComponent from "./CitasComponent";
-import ClinicasComponent from "./ClinicasComponent";
  
  const MedicoDashboard = () => {
    const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -38,7 +37,6 @@ import ClinicasComponent from "./ClinicasComponent";
      { name: "Doctores", icon: <FaUserMd />, component: <DoctoresComponent /> },
      { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosComponent /> },
      { name: "Citas", icon: <FaCalendarAlt />, component: <CitasComponent /> },
-     { name: "Clínicas", icon: <FaClinicMedical />, component: <ClinicasComponent /> },
    ];
  
    // Manejar cambio de pestaña

@@ -2,8 +2,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
-import AdminDashboard from './pages/administrador/AdminDashboard';
-import UsuarioDasboard from './pages/usuario/UsuarioDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import UsuarioDasboard from './pages/UsuarioDashboard';
 import MedicoDasboard from './pages/medico/MedicoDashboard';
 import RecepcionistaDashboard from './pages/recepcionista/RecepcionistaDashboard';
 import RegistroPaciente from './pages/recepcionista/RegistroPaciente';

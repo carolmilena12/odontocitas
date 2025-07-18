@@ -5,10 +5,10 @@ import {
   FaSearch, FaBell, FaUserCircle, FaHome,
   FaTooth, FaClinicMedical, FaFileInvoiceDollar
 } from "react-icons/fa";
-import logo from "../../assets/logodentista.jpeg";
-import CitasUsuario from "../usuario/componentes/CitasUsuario";
-import DoctoresUsuario from "./componentes/DoctoresUsuario";
-import ClinicasComponent from "./componentes/ClinicasComponent";
+import logo from "../assets/logodentista.jpeg";
+import CitasUsuario from "../sections/usuario/CitasUsuario";
+import DoctoresUsuario from "../sections/usuario/DoctoresUsuario";
+import ClinicasComponent from "../sections/usuario/ClinicasComponent";
  const UsuarioDashboard = () => {
    const [sidebarOpen, setSidebarOpen] = useState(false);
    const [activeTab, setActiveTab] = useState("Inicio");
