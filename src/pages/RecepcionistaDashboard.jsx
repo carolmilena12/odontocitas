@@ -1,29 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../services/firebase-config"; // Ajusta la ruta según tu proyecto
-
 import { 
-  FaUserMd, FaCalendarAlt, FaClinicMedical, FaSignOutAlt, FaBars, FaTimes, 
-  FaSearch, FaBell, FaUserCircle, FaHome 
+  FaUsers, FaUserMd, FaChartPie, FaTeeth, 
+  FaCalendarAlt, FaSignOutAlt, FaBars, FaTimes, 
+  FaSearch, FaBell, FaUserCircle, FaHome,
+  FaTooth, FaClinicMedical, FaFileInvoiceDollar
 } from "react-icons/fa";
+import logo from "../assets/logo.png";
 
-import logo from "../assets/logodentista.jpeg";
+// Importar componentes
+import InicioComponent from "../sections/recepcionista/InicioComponent";
+import PacientesComponent from "../sections/recepcionista/PacientesComponent";
+import DoctoresComponent from "../sections/recepcionista/DoctoresComponent";
+import TratamientosComponent from "../sections/recepcionista/TratamientosComponent";
+import CitasComponent from "../sections/recepcionista/CitasComponent";
 
-import CitasUsuario from "../sections/usuario/CitasUsuario";
-import DoctoresUsuario from "../sections/usuario/DoctoresUsuario";
-import ClinicasComponent from "../sections/usuario/ClinicasComponent";
-
-const UsuarioDashboard = () => {
-  // Estados para usuario
-  const [user, setUser] = useState(null);
-  const [loadingUser, setLoadingUser] = useState(true);
-
-  // Sidebar y pestañas
+const RecepcionistaDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("Doctores");
+  const [activeTab, setActiveTab] = useState("Inicio");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // Detectar cambios en tamaño de pantalla
+  // Detectar cambios en el tamaño de pantalla
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -31,73 +27,43 @@ const UsuarioDashboard = () => {
       if (!mobile) setSidebarOpen(true);
     };
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
     handleResize();
-
-    return () => window.removeEventListener("resize", handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Detectar usuario autenticado en Firebase
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoadingUser(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  // Mostrar mientras carga el usuario
-  if (loadingUser) return <p className="text-center mt-20">Cargando usuario...</p>;
-
-  // Si no hay usuario autenticado, mensaje
-  if (!user) return <p className="text-center mt-20">Por favor inicia sesión para continuar.</p>;
-
-  // UID del usuario para pasar a hijos
-  const uidUsuario = user.uid;
-
-  // Función para devolver el componente según pestaña activa
-  const getActiveComponent = () => {
-    switch (activeTab) {
-      case "Doctores":
-        return <DoctoresUsuario uidUsuario={uidUsuario} />;
-      case "Citas":
-        return <CitasUsuario uidUsuario={uidUsuario} />;
-      case "Clínicas":
-        return <ClinicasComponent />;
-      default:
-        return <DoctoresUsuario uidUsuario={uidUsuario} />;
-    }
-  };
-
-  // Items del menú con iconos
+  // Menú items con sus iconos adaptados a clínica dental
   const menuItems = [
-    { name: "Doctores", icon: <FaUserMd /> },
-    { name: "Citas", icon: <FaCalendarAlt /> },
-    { name: "Clínicas", icon: <FaClinicMedical /> },
+    { name: "Inicio", icon: <FaHome />, component: <InicioComponent /> },
+    { name: "Pacientes", icon: <FaUsers />, component: <PacientesComponent /> },
+    { name: "Doctores", icon: <FaUserMd />, component: <DoctoresComponent /> },
+    { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosComponent /> },
+    { name: "Citas", icon: <FaCalendarAlt />, component: <CitasComponent /> },
   ];
 
-  // Manejo clic en menú
+  // Manejar cambio de pestaña
   const handleMenuClick = (tabName) => {
-    if (tabName === "Cerrar Sesión") {
-      auth.signOut();
-      return;
-    }
     setActiveTab(tabName);
     if (isMobile) setSidebarOpen(false);
   };
 
+  // Obtener el componente activo
+  const getActiveComponent = () => {
+    const item = menuItems.find(item => item.name === activeTab);
+    return item ? item.component : <InicioComponent />;
+  };
+
   return (
     <div className="flex h-screen bg-pink-50 overflow-hidden">
-      {/* Overlay móvil */}
+      {/* Overlay para móviles con gradiente rosado */}
       {sidebarOpen && isMobile && (
-        <div
+        <div 
           className="fixed inset-0 z-30 bg-gradient-to-br from-pink-400 to-rose-400 opacity-80"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar con esquema de colores rosados */}
       <div
         className={`w-64 fixed md:relative h-full transition-all duration-300 ease-in-out z-40
           bg-gradient-to-b from-pink-500 to-rose-500 text-white
@@ -105,7 +71,11 @@ const UsuarioDashboard = () => {
       >
         <div className="p-4 border-b border-pink-300">
           <div className="flex items-center justify-center">
-            <img src={logo} alt="Clínica Dental" className="h-12 mr-2" />
+            <img 
+              src={logo}
+              alt="Clínica Dental"
+              className="h-12 mr-2"
+            />
             <h1 className="text-xl font-bold">SALUD DENTAL</h1>
           </div>
         </div>
@@ -130,9 +100,8 @@ const UsuarioDashboard = () => {
             ))}
           </ul>
         </nav>
-
         <div className="absolute bottom-0 w-full p-4 border-t border-pink-300">
-          <button
+          <button 
             className="flex items-center w-full p-3 text-white hover:bg-pink-400 hover:bg-opacity-30 rounded-lg transition-colors"
             onClick={() => handleMenuClick("Cerrar Sesión")}
           >
@@ -144,6 +113,7 @@ const UsuarioDashboard = () => {
 
       {/* Contenido Principal */}
       <div className="flex-1 overflow-auto">
+        {/* Barra superior */}
         <header className="bg-white shadow-sm p-3 md:p-4 sticky top-0 z-30">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
@@ -153,7 +123,7 @@ const UsuarioDashboard = () => {
               >
                 {sidebarOpen ? <FaTimes size={16} /> : <FaBars size={16} />}
               </button>
-
+              
               {!isMobile ? (
                 <div className="relative">
                   <FaSearch className="absolute left-3 top-3 text-pink-400" />
@@ -174,33 +144,34 @@ const UsuarioDashboard = () => {
                 </div>
               )}
             </div>
-
+            
             <div className="flex items-center space-x-2 md:space-x-4">
               <button className="p-2 rounded-full hover:bg-pink-100 relative text-pink-600">
-                <FaBell size={16} />
+                <FaBell size={16} className="md:size-[18px]" />
                 <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-rose-500"></span>
               </button>
               {!isMobile && (
                 <div className="flex items-center">
-                  <FaUserCircle size={20} className="text-pink-600" />
-                  <span className="ml-2 font-medium hidden md:inline">Paciente</span>
+                  <FaUserCircle size={20} className="text-pink-600 md:size-[24px]" />
+                  <span className="ml-2 font-medium hidden md:inline">Recepcionista</span>
                 </div>
               )}
             </div>
           </div>
         </header>
 
+        {/* Contenido dinámico basado en la pestaña activa */}
         <main className="p-3 md:p-6">
           <div className="flex justify-between items-center mb-4 md:mb-6">
-            <h2 className="text-xl md:text-2xl font-bold text-pink-800">{activeTab}</h2>
+            <h2 className="text-xl md:text-2xl font-bold text-pink-800">
+              {activeTab}
+            </h2>
             <div className="flex items-center space-x-2 text-sm text-pink-600">
               <FaHome className="text-pink-400" />
               <span>/</span>
               <span className="font-medium">{activeTab}</span>
             </div>
           </div>
-
-          {/* Aquí va el componente activo */}
           {getActiveComponent()}
         </main>
       </div>
@@ -208,4 +179,4 @@ const UsuarioDashboard = () => {
   );
 };
 
-export default UsuarioDashboard;
+export default RecepcionistaDashboard;

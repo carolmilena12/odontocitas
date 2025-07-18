@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { 
-  FaUsers, FaUserMd, FaChartPie, FaTeeth, 
-  FaCalendarAlt, FaSignOutAlt, FaBars, FaTimes, 
+import {
+  FaUsers, FaUserMd, FaChartPie, FaTeeth,
+  FaCalendarAlt, FaSignOutAlt, FaBars, FaTimes,
   FaSearch, FaBell, FaUserCircle, FaHome,
   FaTooth, FaClinicMedical, FaFileInvoiceDollar
 } from "react-icons/fa";
-import logo from "../../assets/logo.png";
+import logo from "../assets/logodentista.jpeg"; // Asegúrate de tener un logo adecuado
+import InicioComponent from "../sections/medico/InicioComponent";
+import PacientesComponent from "../sections/medico/PacientesComponent";
+import TratamientosComponent from "../sections/medico/TratamientosComponent";
+import CitasComponent from "../sections/medico/CitasComponent";
 
-// Importar componentes
-import InicioComponent from "./InicioComponent";
-import PacientesComponent from "./PacientesComponent";
-import DoctoresComponent from "./DoctoresComponent";
-import TratamientosComponent from "./TratamientosComponent";
-import CitasComponent from "./CitasComponent";
-import ClinicasComponent from "./ClinicasComponent";
-
-const RecepcionistaDashboard = () => {
+const MedicoDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Inicio");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Simulamos usuario actual con uid (reemplaza esto con tu autenticación real)
+  const usuarioActual = { uid: "uid-del-medico-actual" };
 
   // Detectar cambios en el tamaño de pantalla
   useEffect(() => {
@@ -33,14 +32,12 @@ const RecepcionistaDashboard = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Menú items con sus iconos adaptados a clínica dental
+  // Definir los componentes con props si es necesario
   const menuItems = [
     { name: "Inicio", icon: <FaHome />, component: <InicioComponent /> },
-    { name: "Pacientes", icon: <FaUsers />, component: <PacientesComponent /> },
-    { name: "Doctores", icon: <FaUserMd />, component: <DoctoresComponent /> },
+    { name: "Pacientes", icon: <FaUsers />, component: <PacientesComponent uidMedico={usuarioActual.uid} /> },
     { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosComponent /> },
     { name: "Citas", icon: <FaCalendarAlt />, component: <CitasComponent /> },
-    { name: "Clínicas", icon: <FaClinicMedical />, component: <ClinicasComponent /> },
   ];
 
   // Manejar cambio de pestaña
@@ -52,14 +49,14 @@ const RecepcionistaDashboard = () => {
   // Obtener el componente activo
   const getActiveComponent = () => {
     const item = menuItems.find(item => item.name === activeTab);
-    return item ? item.component : <InicioComponent />;
+    return item ? item.component : <PacientesComponent uidMedico={usuarioActual.uid} />;
   };
 
   return (
     <div className="flex h-screen bg-pink-50 overflow-hidden">
       {/* Overlay para móviles con gradiente rosado */}
       {sidebarOpen && isMobile && (
-        <div 
+        <div
           className="fixed inset-0 z-30 bg-gradient-to-br from-pink-400 to-rose-400 opacity-80"
           onClick={() => setSidebarOpen(false)}
         />
@@ -73,7 +70,7 @@ const RecepcionistaDashboard = () => {
       >
         <div className="p-4 border-b border-pink-300">
           <div className="flex items-center justify-center">
-            <img 
+            <img
               src={logo}
               alt="Clínica Dental"
               className="h-12 mr-2"
@@ -89,10 +86,9 @@ const RecepcionistaDashboard = () => {
                 <button
                   onClick={() => handleMenuClick(item.name)}
                   className={`flex items-center w-full p-3 rounded-lg transition-colors
-                    ${
-                      activeTab === item.name
-                        ? "bg-pink-100 text-pink-700 font-medium"
-                        : "text-white hover:bg-pink-400 hover:bg-opacity-30"
+                    ${activeTab === item.name
+                      ? "bg-pink-100 text-pink-700 font-medium"
+                      : "text-white hover:bg-pink-400 hover:bg-opacity-30"
                     }`}
                 >
                   <span className="mr-3 text-lg">{item.icon}</span>
@@ -103,7 +99,7 @@ const RecepcionistaDashboard = () => {
           </ul>
         </nav>
         <div className="absolute bottom-0 w-full p-4 border-t border-pink-300">
-          <button 
+          <button
             className="flex items-center w-full p-3 text-white hover:bg-pink-400 hover:bg-opacity-30 rounded-lg transition-colors"
             onClick={() => handleMenuClick("Cerrar Sesión")}
           >
@@ -125,7 +121,7 @@ const RecepcionistaDashboard = () => {
               >
                 {sidebarOpen ? <FaTimes size={16} /> : <FaBars size={16} />}
               </button>
-              
+
               {!isMobile ? (
                 <div className="relative">
                   <FaSearch className="absolute left-3 top-3 text-pink-400" />
@@ -146,7 +142,7 @@ const RecepcionistaDashboard = () => {
                 </div>
               )}
             </div>
-            
+
             <div className="flex items-center space-x-2 md:space-x-4">
               <button className="p-2 rounded-full hover:bg-pink-100 relative text-pink-600">
                 <FaBell size={16} className="md:size-[18px]" />
@@ -155,7 +151,7 @@ const RecepcionistaDashboard = () => {
               {!isMobile && (
                 <div className="flex items-center">
                   <FaUserCircle size={20} className="text-pink-600 md:size-[24px]" />
-                  <span className="ml-2 font-medium hidden md:inline">Recepcionista</span>
+                  <span className="ml-2 font-medium hidden md:inline">Rol Medico</span>
                 </div>
               )}
             </div>
@@ -181,4 +177,4 @@ const RecepcionistaDashboard = () => {
   );
 };
 
-export default RecepcionistaDashboard;
+export default MedicoDashboard;
