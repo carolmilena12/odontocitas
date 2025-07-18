@@ -5,13 +5,12 @@ import {
   FaSearch, FaBell, FaUserCircle, FaHome,
   FaTooth, FaClinicMedical, FaFileInvoiceDollar
 } from "react-icons/fa";
-import logo from "../../assets/logo.png";
-import InicioAdmin from "./components/InicioAdmin";
-import PacientesAdmin from "./components/PacientesAdmin";
-import DoctoresAdmin from "./components/DoctoresAdmin";
-import TratamientosAdmin from "./components/TratamientosAdmin";
-import CitasAdmin from "./components/CitasAdmin";
-import ClinicaAdmin from "./components/ClinicaAdmin";// Asegúrate de tener un logo adecuado
+import logo from "../assets/logodentista.jpeg";
+import InicioAdmin from "../sections/administrador/InicioAdmin";
+import PacientesAdmin from "../sections/administrador/PacientesAdmin";
+import DoctoresAdmin from "../sections/administrador/DoctoresAdmin";
+import TratamientosAdmin from "../sections/administrador/TratamientosAdmin";
+import CitasAdmin from "../sections/administrador/CitasAdmin";
 
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -38,7 +37,6 @@ const AdminDashboard = () => {
     { name: "Doctores", icon: <FaUserMd />, component: <DoctoresAdmin /> },
     { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosAdmin /> },
     { name: "Citas", icon: <FaCalendarAlt />, component: <CitasAdmin /> },
-    { name: "Clínica", icon: <FaClinicMedical />, component: <ClinicaAdmin /> },
   ];
 
   // Manejar cambio de pestaña
@@ -153,7 +151,7 @@ const AdminDashboard = () => {
               {!isMobile && (
                 <div className="flex items-center">
                   <FaUserCircle size={20} className="text-pink-600 md:size-[24px]" />
-                  <span className="ml-2 font-medium hidden md:inline">Administrador</span>
+                  <span className="ml-2 font-medium hidden md:inline">Rol Administrador</span>
                 </div>
               )}
             </div>

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { loginUser } from '../services/firebase-auth';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import dentalIcon from '../assets/logo.png'; // Asegúrate de tener esta imagen en tu carpeta assets
+import dentalIcon from '../assets/logodentista.jpeg'; // Asegúrate de tener esta imagen en tu carpeta assets
 
 function LoginForm() {
   const [username, setUsername] = useState('');
@@ -23,19 +23,21 @@ const handleSubmit = async (e) => {
 
     switch (rol.toLowerCase()) {
       case 'administrador':
-        navigate('/admin/dashboard');
+        navigate('/admin');
         break;
       case 'paciente':
-        navigate('/usuario/inicio');
+        navigate('/paciente');
         break;
       case 'recepcionista':
-        navigate('/recepcion/inicio');
+        navigate('/recepcionista');
         break;
+        case 'medico':
+          navigate('/medico')
       default:
-        setMensaje('Rol desconocido');
+        setMensaje('Este rol no coincide');
     }
   } catch (error) {
-    console.error('❌ Error de login con Firebase:', error);
+    console.error('❌ Error de Inicio de Sesion:', error);
     setMensaje('Credenciales incorrectas o usuario no registrado');
   } finally {
     setIsSubmitting(false);
