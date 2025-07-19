@@ -19,10 +19,11 @@ const MedicoDashboard = () => {
   const [activeTab, setActiveTab] = useState("Inicio");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [user, setUser] = useState(null);
+  const [medicoNombre, setMedicoNombre] = useState("");
   const navigate = useNavigate();
 
   // Simulamos usuario actual con uid (reemplaza esto con tu autenticación real)
-  const usuarioActual = { uid: "uid-del-medico-actual" };
+  const usuarioActual = { uid: user?.uid || null };
 
   // Detectar cambios en el tamaño de pantalla
   useEffect(() => {
@@ -41,16 +42,25 @@ const MedicoDashboard = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+      localStorage.setItem("medicoNombre", currentUser.displayName || "Médico");
+    }
     });
     return () => unsubscribe();
   }, []);
+
+// Leer nombre desde localStorage para mostrar
+useEffect(() => {
+  const nombre = localStorage.getItem("medicoNombre") || "Médico";
+  setMedicoNombre(nombre);
+}, []);
 
   // Definir los componentes con props si es necesario
   const menuItems = [
     { name: "Inicio", icon: <FaHome />, component: <InicioComponent /> },
     { name: "Pacientes", icon: <FaUsers />, component: <PacientesComponent uidMedico={usuarioActual.uid} /> },
     { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosComponent /> },
-    { name: "Citas", icon: <FaCalendarAlt />, component: <CitasComponent /> },
+    { name: "Citas", icon: <FaCalendarAlt />, component: <CitasComponent uidMedico={usuarioActual.uid} /> },
   ];
 
   // Manejar cambio de pestaña
@@ -169,7 +179,7 @@ const MedicoDashboard = () => {
               {!isMobile && (
                 <div className="flex items-center">
                   <FaUserCircle size={20} className="text-pink-600 md:size-[24px]" />
-                  <span className="ml-2 font-medium hidden md:inline">{user?.displayName || "Médico"}</span>
+                  <span className="ml-2 font-medium hidden md:inline">{medicoNombre}</span>
                 </div>
               )}
             </div>

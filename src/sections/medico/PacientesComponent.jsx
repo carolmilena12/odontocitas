@@ -31,12 +31,15 @@ const PacientesComponent = ({ uidMedico }) => {
         setPacientes(pacientesData);
       } catch (error) {
         console.error("Error al obtener pacientes asignados:", error);
+        setPacientes([]); // Por si ocurre un error, limpiamos la lista
       } finally {
         setLoading(false);
       }
     };
 
-    if (uidMedico) fetchPacientesAsignados();
+    if (uidMedico) {
+      fetchPacientesAsignados();
+    }
   }, [uidMedico]);
 
   if (loading) return <p className="text-center">Cargando pacientes...</p>;
@@ -59,3 +62,4 @@ const PacientesComponent = ({ uidMedico }) => {
 };
 
 export default PacientesComponent;
+

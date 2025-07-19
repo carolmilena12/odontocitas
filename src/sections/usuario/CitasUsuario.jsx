@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../services/firebase-config";
 
 const CitasUsuario = ({ uidUsuario }) => {
@@ -32,6 +32,17 @@ const CitasUsuario = ({ uidUsuario }) => {
     }
   }, [uidUsuario]);
 
+  const eliminarCita = async (idCita) => {
+    if (!window.confirm("¿Seguro que deseas cancelar esta cita?")) return;
+    try {
+      await deleteDoc(doc(db, "citas", idCita));
+      setCitas(prevCitas => prevCitas.filter(cita => cita.id_cita !== idCita));
+    } catch (error) {
+      alert("Hubo un error al eliminar la cita.");
+      console.error("Error eliminando cita:", error);
+    }
+  };
+
   if (loading) return <p className="text-center">Cargando citas...</p>;
   if (citas.length === 0) return <p className="text-center text-pink-500">No tienes citas agendadas.</p>;
 
@@ -52,7 +63,12 @@ const CitasUsuario = ({ uidUsuario }) => {
                 📅 {cita.fecha} ⏰ {cita.hora}
               </p>
             </div>
-            {/* Aquí puedes agregar botones para editar o cancelar, si quieres */}
+            <button
+              onClick={() => eliminarCita(cita.id_cita)}
+              className="mt-4 md:mt-0 bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-xl shadow transition"
+            >
+              Cancelar cita
+            </button>
           </div>
         ))}
       </div>
@@ -61,3 +77,4 @@ const CitasUsuario = ({ uidUsuario }) => {
 };
 
 export default CitasUsuario;
+
