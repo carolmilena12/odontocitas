@@ -5,8 +5,10 @@ import {
   FaSearch, FaBell, FaUserCircle, FaHome,
   FaTooth, FaClinicMedical, FaFileInvoiceDollar
 } from "react-icons/fa";
-import logo from "../assets/logodentista.jpeg";
+import { useNavigate } from "react-router-dom";
+import logo from "../assets/logodentista.png";
 import InicioAdmin from "../sections/administrador/InicioAdmin";
+import RegistroUsuarios from "../sections/administrador/RegistroUsuarios";
 import PacientesAdmin from "../sections/administrador/PacientesAdmin";
 import DoctoresAdmin from "../sections/administrador/DoctoresAdmin";
 import TratamientosAdmin from "../sections/administrador/TratamientosAdmin";
@@ -16,6 +18,8 @@ const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Inicio");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   // Detectar cambios en el tamaño de pantalla
   useEffect(() => {
@@ -30,9 +34,16 @@ const AdminDashboard = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Obtener usuario del localStorage
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(storedUser);
+  }, []);
+
   // Menú items con sus iconos adaptados a clínica dental
   const menuItems = [
     { name: "Inicio", icon: <FaHome />, component: <InicioAdmin /> },
+    { name: "Registro de Usuarios", icon: <FaClinicMedical />, component: <RegistroUsuarios /> },
     { name: "Pacientes", icon: <FaUsers />, component: <PacientesAdmin /> },
     { name: "Doctores", icon: <FaUserMd />, component: <DoctoresAdmin /> },
     { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosAdmin /> },
@@ -49,6 +60,11 @@ const AdminDashboard = () => {
   const getActiveComponent = () => {
     const item = menuItems.find(item => item.name === activeTab);
     return item ? item.component : <InicioComponent />;
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
   };
 
   return (
@@ -101,7 +117,7 @@ const AdminDashboard = () => {
         <div className="absolute bottom-0 w-full p-4 border-t border-pink-300">
           <button 
             className="flex items-center w-full p-3 text-white hover:bg-pink-400 hover:bg-opacity-30 rounded-lg transition-colors"
-            onClick={() => handleMenuClick("Cerrar Sesión")}
+            onClick={handleLogout}
           >
             <FaSignOutAlt className="mr-3" />
             <span>Cerrar Sesión</span>
@@ -151,7 +167,7 @@ const AdminDashboard = () => {
               {!isMobile && (
                 <div className="flex items-center">
                   <FaUserCircle size={20} className="text-pink-600 md:size-[24px]" />
-                  <span className="ml-2 font-medium hidden md:inline">Rol Administrador</span>
+                  <span className="ml-2 font-medium hidden md:inline">{user?.displayName || "Administrador"}</span>
                 </div>
               )}
             </div>

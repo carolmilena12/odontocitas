@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { loginUser } from '../services/firebase-auth';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import dentalIcon from '../assets/logodentista.jpeg'; // Asegúrate de tener esta imagen en tu carpeta assets
+import dentalIcon from '../assets/logodentista.png'; // Asegúrate de tener esta imagen en tu carpeta assets
 
 function LoginForm() {
   const [username, setUsername] = useState('');
@@ -65,7 +65,7 @@ const handleSubmit = async (e) => {
             whileTap={{ scale: 0.95 }}
             className="mx-auto w-24 h-24 bg-pink-100 rounded-full flex items-center justify-center mb-4"
           >
-            <img src={dentalIcon} alt="Icono dental" className="h-12 w-12" />
+            <img src={dentalIcon} alt="Icono dental" className="h-32 w-32" />
           </motion.div>
           <h2 className="text-3xl font-bold text-pink-800">Clínica Salud Dental</h2>
           <p className="text-pink-600 mt-2">Sistema de gestión odontológica</p>
@@ -127,19 +127,7 @@ const handleSubmit = async (e) => {
           </motion.p>
         )}
 
-        <div className="text-center text-sm text-pink-600 pt-4 border-t border-pink-100">
-          ¿Problemas para acceder? <a href="#" className="text-rose-600 hover:underline font-medium">Contacte al administrador</a>
-        </div>
-        
-        <div className="text-center text-sm text-pink-600 pt-2">
-          ¿Eres nuevo? <button
-          onClick={() => navigate('/registro-paciente')}
-          className="text-rose-600 hover:underline font-medium"
-          >
-          Regístrate como paciente
-          </button>
-          </div>
-
+      
       </motion.form>
     </motion.div>
   );

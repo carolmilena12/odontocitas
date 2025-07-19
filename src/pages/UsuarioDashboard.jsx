@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../services/firebase-config"; // Ajusta la ruta según tu proyecto
+import { useNavigate } from "react-router-dom";
 
 import { 
   FaUserMd, FaCalendarAlt, FaClinicMedical, FaSignOutAlt, FaBars, FaTimes, 
   FaSearch, FaBell, FaUserCircle, FaHome 
 } from "react-icons/fa";
 
-import logo from "../assets/logodentista.jpeg";
+import logo from "../assets/logodentista.png";
 
 import CitasUsuario from "../sections/usuario/CitasUsuario";
 import DoctoresUsuario from "../sections/usuario/DoctoresUsuario";
@@ -22,6 +23,8 @@ const UsuarioDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Doctores");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  const navigate = useNavigate();
 
   // Detectar cambios en tamaño de pantalla
   useEffect(() => {
@@ -81,6 +84,7 @@ const UsuarioDashboard = () => {
   const handleMenuClick = (tabName) => {
     if (tabName === "Cerrar Sesión") {
       auth.signOut();
+      navigate("/");
       return;
     }
     setActiveTab(tabName);
@@ -105,7 +109,7 @@ const UsuarioDashboard = () => {
       >
         <div className="p-4 border-b border-pink-300">
           <div className="flex items-center justify-center">
-            <img src={logo} alt="Clínica Dental" className="h-12 mr-2" />
+            <img src={logo} alt="Clínica Dental" className="h-28 mr-2" />
             <h1 className="text-xl font-bold">SALUD DENTAL</h1>
           </div>
         </div>
@@ -183,7 +187,7 @@ const UsuarioDashboard = () => {
               {!isMobile && (
                 <div className="flex items-center">
                   <FaUserCircle size={20} className="text-pink-600" />
-                  <span className="ml-2 font-medium hidden md:inline">Paciente</span>
+                  <span className="ml-2 font-medium hidden md:inline">{user?.displayName || "Paciente"}</span>
                 </div>
               )}
             </div>

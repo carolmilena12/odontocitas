@@ -5,16 +5,21 @@ import {
   FaSearch, FaBell, FaUserCircle, FaHome,
   FaTooth, FaClinicMedical, FaFileInvoiceDollar
 } from "react-icons/fa";
-import logo from "../assets/logodentista.jpeg"; // Asegúrate de tener un logo adecuado
+import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import logo from "../assets/logodentista.png"; // Asegúrate de tener un logo adecuado
 import InicioComponent from "../sections/medico/InicioComponent";
 import PacientesComponent from "../sections/medico/PacientesComponent";
 import TratamientosComponent from "../sections/medico/TratamientosComponent";
 import CitasComponent from "../sections/medico/CitasComponent";
+import { auth } from "../services/firebase-config";
 
 const MedicoDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Inicio");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   // Simulamos usuario actual con uid (reemplaza esto con tu autenticación real)
   const usuarioActual = { uid: "uid-del-medico-actual" };
@@ -30,6 +35,14 @@ const MedicoDashboard = () => {
     window.addEventListener('resize', handleResize);
     handleResize();
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Suscribirse al estado de autenticación del usuario
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
   }, []);
 
   // Definir los componentes con props si es necesario
@@ -50,6 +63,11 @@ const MedicoDashboard = () => {
   const getActiveComponent = () => {
     const item = menuItems.find(item => item.name === activeTab);
     return item ? item.component : <PacientesComponent uidMedico={usuarioActual.uid} />;
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
   };
 
   return (
@@ -99,9 +117,9 @@ const MedicoDashboard = () => {
           </ul>
         </nav>
         <div className="absolute bottom-0 w-full p-4 border-t border-pink-300">
-          <button
+          <button 
             className="flex items-center w-full p-3 text-white hover:bg-pink-400 hover:bg-opacity-30 rounded-lg transition-colors"
-            onClick={() => handleMenuClick("Cerrar Sesión")}
+            onClick={handleLogout}
           >
             <FaSignOutAlt className="mr-3" />
             <span>Cerrar Sesión</span>
@@ -151,7 +169,7 @@ const MedicoDashboard = () => {
               {!isMobile && (
                 <div className="flex items-center">
                   <FaUserCircle size={20} className="text-pink-600 md:size-[24px]" />
-                  <span className="ml-2 font-medium hidden md:inline">Rol Medico</span>
+                  <span className="ml-2 font-medium hidden md:inline">{user?.displayName || "Médico"}</span>
                 </div>
               )}
             </div>

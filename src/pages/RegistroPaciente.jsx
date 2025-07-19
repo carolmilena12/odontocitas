@@ -5,7 +5,7 @@ import { auth, db } from '../services/firebase-config';
 import { setDoc, doc } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import dentalIcon from '../assets/logodentista.jpeg';
+import dentalIcon from '../assets/logodentista.png'; // Asegúrate de tener esta imagen en tu carpeta assets
 
 function RegistroPaciente() {
   const [nombre, setNombre] = useState('');
