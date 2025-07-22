@@ -59,7 +59,7 @@ useEffect(() => {
   const menuItems = [
     { name: "Inicio", icon: <FaHome />, component: <InicioComponent /> },
     { name: "Pacientes", icon: <FaUsers />, component: <PacientesComponent uidMedico={usuarioActual.uid} /> },
-    { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosComponent /> },
+    { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosComponent uidMedico={usuarioActual.uid} /> },
     { name: "Citas", icon: <FaCalendarAlt />, component: <CitasComponent uidMedico={usuarioActual.uid} /> },
   ];
 
