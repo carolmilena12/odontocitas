@@ -11,42 +11,25 @@ const RegistroUsuarios = () => {
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
   const [matricula, setMatricula] = useState("");
-  const [foto, setFoto] = useState(null);
   const [mensaje, setMensaje] = useState("");
-
-  const handleFotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFoto(file);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formData = new FormData();
-      formData.append('email', email);
-      formData.append('password', password);
-      formData.append('rol', rol);
-      formData.append('nombre', nombre);
-      formData.append('identificacion', identificacion);
-      formData.append('fechaNacimiento', fechaNacimiento);
-      formData.append('telefono', telefono);
-      formData.append('direccion', direccion);
-      
-      if (rol === "medico") {
-        formData.append('matricula', matricula);
-        if (foto) {
-          formData.append('foto', foto);
-        }
-      }
-
-      await registrarUsuario(formData);
-      
+      await registrarUsuario({
+        email,
+        password,
+        rol,
+        nombre,
+        identificacion,
+        fechaNacimiento,
+        telefono,
+        direccion,
+        matricula: rol === "medico" ? matricula : null
+      });
       setMensaje("✅ Usuario registrado exitosamente");
       setNombre(""); setEmail(""); setPassword(""); setRol("paciente");
-      setIdentificacion(""); setFechaNacimiento(""); setTelefono(""); 
-      setDireccion(""); setMatricula(""); setFoto(null);
+      setIdentificacion(""); setFechaNacimiento(""); setTelefono(""); setDireccion(""); setMatricula("");
     } catch (error) {
       setMensaje("❌ Error al registrar usuario: " + error.message);
     }
@@ -55,7 +38,7 @@ const RegistroUsuarios = () => {
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm max-w-xl mx-auto">
       <h2 className="text-xl font-bold mb-4 text-pink-700">Registrar Usuario</h2>
-      <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input type="text" placeholder="Nombre completo" value={nombre} onChange={(e) => setNombre(e.target.value)} className="w-full p-2 border rounded" required />
         <input type="email" placeholder="Correo electrónico" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 border rounded" required />
         <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-2 border rounded" required />
@@ -69,23 +52,7 @@ const RegistroUsuarios = () => {
         <input type="text" placeholder="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} className="w-full p-2 border rounded" required />
         <input type="text" placeholder="Dirección" value={direccion} onChange={(e) => setDireccion(e.target.value)} className="w-full p-2 border rounded" required />
         {rol === "medico" && (
-          <>
-            <input type="text" placeholder="Número de matrícula" value={matricula} onChange={(e) => setMatricula(e.target.value)} className="w-full p-2 border rounded" required />
-            <div className="mt-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Foto del médico:</label>
-              <input 
-                type="file" 
-                accept="image/*" 
-                onChange={handleFotoChange} 
-                className="w-full p-2 border rounded"
-              />
-              {foto && (
-                <div className="mt-2">
-                  <p className="text-sm text-gray-600">Archivo seleccionado: {foto.name}</p>
-                </div>
-              )}
-            </div>
-          </>
+          <input type="text" placeholder="Número de matrícula" value={matricula} onChange={(e) => setMatricula(e.target.value)} className="w-full p-2 border rounded" required />
         )}
         <button type="submit" className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600">Registrar</button>
       </form>
@@ -93,5 +60,6 @@ const RegistroUsuarios = () => {
     </div>
   );
 };
+
 
 export default RegistroUsuarios;
