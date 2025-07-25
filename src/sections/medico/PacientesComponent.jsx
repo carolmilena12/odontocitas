@@ -95,65 +95,109 @@ const PacientesComponent = ({ uidMedico, medicoData }) => {
       <p className="text-sm text-gray-500">Los pacientes aparecerán aquí una vez que tengan citas agendadas contigo.</p>
     </div>
   );
-
-  return (
-    <div className="bg-white p-6 rounded-2xl shadow-md max-w-6xl mx-auto">
-      <h2 className="text-2xl font-bold text-pink-600 mb-6 text-center">
-        👩‍⚕️ Pacientes Asignados {medicoData?.nombre && `al Dr. ${medicoData.nombre}`}
+return (
+  <div className="bg-white rounded-xl shadow-lg overflow-hidden max-w-6xl mx-auto">
+    {/* Encabezado con efecto gradiente */}
+    <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-6 text-white">
+      <h2 className="text-2xl font-bold flex items-center">
+        <span className="bg-white/20 p-2 rounded-full mr-3">
+          👩‍⚕️
+        </span>
+        Pacientes Asignados {medicoData?.nombre && `a Dr. ${medicoData.nombre}`}
       </h2>
-      
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-pink-200">
-          <thead className="bg-pink-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-pink-500 uppercase tracking-wider">Nombre</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-pink-500 uppercase tracking-wider">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-pink-500 uppercase tracking-wider">Teléfono</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-pink-500 uppercase tracking-wider">Última Cita</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-pink-200">
+      <p className="text-pink-100 mt-1">
+        {pacientes.length} {pacientes.length === 1 ? 'paciente' : 'pacientes'} en tu lista
+      </p>
+    </div>
+
+    {/* Contenido principal */}
+    <div className="p-6">
+      {pacientes.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="mx-auto w-24 h-24 bg-pink-100 rounded-full flex items-center justify-center mb-4">
+            <svg className="w-12 h-12 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+          </div>
+          <h3 className="text-xl font-medium text-pink-600 mb-2">No tienes pacientes aún</h3>
+          <p className="text-gray-500 max-w-md mx-auto">
+            Los pacientes aparecerán aquí automáticamente cuando agenden citas contigo.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {/* Barra de búsqueda (puedes implementar la funcionalidad después) */}
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Buscar paciente..."
+              className="w-full pl-10 pr-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-transparent"
+            />
+            <svg className="absolute left-3 top-3 h-4 w-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+
+          {/* Lista de pacientes con cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {pacientes.map((paciente) => (
-              <tr key={paciente.id} className="hover:bg-pink-50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 h-10 w-10 bg-pink-100 rounded-full flex items-center justify-center">
-                      <span className="text-pink-600 font-medium">
-                        {paciente.nombre?.charAt(0)}{paciente.apellido?.charAt(0)}
-                      </span>
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-pink-900">
-                        {paciente.nombre} {paciente.apellido}
-                      </div>
-                      <div className="text-xs text-pink-500">
-                        ID: {paciente.id}
-                      </div>
+              <div key={paciente.id} className="border border-pink-100 rounded-xl p-4 hover:shadow-md transition-shadow">
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0">
+                    <div className="h-12 w-12 bg-gradient-to-br from-pink-300 to-rose-300 rounded-full flex items-center justify-center text-white font-bold">
+                      {paciente.nombre?.charAt(0)}{paciente.apellido?.charAt(0)}
                     </div>
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-pink-600">
-                  <a href={`mailto:${paciente.email}`} className="hover:underline hover:text-pink-800">
-                    {paciente.email}
-                  </a>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-pink-600">
-                  {paciente.telefono || 'No registrado'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-pink-600">
-                  {paciente.ultimaCita || 'No disponible'}
-                </td>
-              </tr>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-semibold text-pink-800 truncate">
+                      {paciente.nombre} {paciente.apellido}
+                    </h3>
+                    <p className="text-sm text-pink-600 truncate">
+                      <a href={`mailto:${paciente.email}`} className="hover:underline">
+                        {paciente.email}
+                      </a>
+                    </p>
+                    <div className="mt-2 flex items-center text-sm text-gray-500">
+                      <svg className="flex-shrink-0 mr-1.5 h-4 w-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                      </svg>
+                      {paciente.telefono || 'Sin teléfono'}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-3 pt-3 border-t border-pink-100 flex justify-between items-center">
+                  <span className="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded-full">
+                    ID: {paciente.id.substring(0, 6)}...
+                  </span>
+                  {paciente.ultimaCita && (
+                    <span className="text-xs text-gray-500">
+                      Últ. cita: {paciente.ultimaCita}
+                    </span>
+                  )}
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
-      </div>
-      
-      <div className="mt-4 text-xs text-gray-500">
-        <p>Mostrando {pacientes.length} pacientes encontrados</p>
-      </div>
+          </div>
+        </div>
+      )}
     </div>
-  );
+
+    {/* Pie de página */}
+    {pacientes.length > 0 && (
+      <div className="bg-pink-50 px-6 py-3 text-sm text-pink-600 border-t border-pink-100">
+        <div className="flex justify-between items-center">
+          <span>
+            Mostrando <span className="font-medium">{pacientes.length}</span> pacientes
+          </span>
+          <button className="text-pink-500 hover:text-pink-700 font-medium">
+            Ver todos →
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+);
+
 };
 
 export default PacientesComponent;

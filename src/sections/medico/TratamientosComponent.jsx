@@ -158,7 +158,7 @@ const HistorialMedico = ({ uidMedico }) => {
           <option value="">-- Seleccione un paciente --</option>
           {pacientes.map(paciente => (
             <option key={paciente.id} value={paciente.id}>
-              {paciente.nombre} {paciente.apellido} - {paciente.email}
+              {paciente.nombre} {paciente.apellido}
             </option>
           ))}
         </select>
