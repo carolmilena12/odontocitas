@@ -9,7 +9,6 @@ const InicioComponent = () => {
         { title: 'Citas Hoy', value: '12', icon: <FaCalendarAlt className="text-pink-500" />, color: 'bg-pink-100' },
         { title: 'Pacientes', value: '84', icon: <FaUsers className="text-rose-500" />, color: 'bg-rose-100' },
         { title: 'Tratamientos', value: '9', icon: <FaTooth className="text-fuchsia-500" />, color: 'bg-fuchsia-100' },
-        { title: 'Ingresos', value: '$3,450', icon: <FaFileInvoiceDollar className="text-purple-500" />, color: 'bg-purple-100' },
       ].map((stat, index) => (
         <div key={index} className={`${stat.color} p-4 rounded-xl shadow-sm`}>
           <div className="flex justify-between">
