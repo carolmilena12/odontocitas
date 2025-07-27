@@ -46,7 +46,7 @@ const AdminDashboard = () => {
     { name: "Registro de Usuarios", icon: <FaClinicMedical />, component: <RegistroUsuarios /> },
     { name: "Pacientes", icon: <FaUsers />, component: <PacientesAdmin /> },
     { name: "Doctores", icon: <FaUserMd />, component: <DoctoresAdmin /> },
-    { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosAdmin /> },
+// { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosAdmin /> },
     { name: "Citas", icon: <FaCalendarAlt />, component: <CitasAdmin /> },
   ];
 
@@ -193,7 +193,6 @@ const AdminDashboard = () => {
   );
 };
 
-// Componentes para cada sección adaptados a clínica dental
  
 
 

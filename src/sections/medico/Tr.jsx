@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, where, doc, getDoc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../services/firebase-config';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import {addDoc, serverTimestamp} from 'firebase/firestore';
 
-// Estilos para el PDF (se mantienen igual)
+// Estilos para el PDF
 const styles = StyleSheet.create({
   page: {
     padding: 30,
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
   }
 });
 
-// Componente para el PDF (se mantiene igual)
+// Componente para el PDF
 const HistorialPDF = ({ paciente, historial }) => (
   <Document>
     <Page size="A4" style={styles.page}>
@@ -82,7 +83,6 @@ const HistorialMedico = ({ uidMedico }) => {
   const [pacientes, setPacientes] = useState([]);
   const [selectedPaciente, setSelectedPaciente] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [historialesGuardados, setHistorialesGuardados] = useState([]);
   const [historial, setHistorial] = useState({
     motivo: '',
     antecedentes: '',
@@ -128,34 +128,6 @@ const HistorialMedico = ({ uidMedico }) => {
     if (uidMedico) fetchPacientes();
   }, [uidMedico]);
 
-  // Obtener historiales del paciente seleccionado
-  useEffect(() => {
-    const fetchHistoriales = async () => {
-      if (!selectedPaciente) return;
-      
-      try {
-        const historialesRef = collection(db, 'historiales');
-        const q = query(
-          historialesRef, 
-          where('id_paciente', '==', selectedPaciente.id),
-          where('id_medico', '==', uidMedico)
-        );
-        
-        const snapshot = await getDocs(q);
-        const historialesData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-
-        setHistorialesGuardados(historialesData);
-      } catch (error) {
-        console.error('Error al obtener historiales:', error);
-      }
-    };
-
-    fetchHistoriales();
-  }, [selectedPaciente, uidMedico]);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setHistorial(prev => ({
@@ -164,42 +136,35 @@ const HistorialMedico = ({ uidMedico }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const historialesRef = collection(db, 'historiales');
-      const nuevoHistorial = {
-        ...historial,
-        id_paciente: selectedPaciente.id,
-        id_medico: uidMedico,
-        fecha: serverTimestamp(),
-        pacienteNombre: `${selectedPaciente.nombre} ${selectedPaciente.apellido}`
-      };
-      
-      const docRef = await addDoc(historialesRef, nuevoHistorial);
-      
-      // Agregar el nuevo historial a la lista local
-      setHistorialesGuardados(prev => [{
-        id: docRef.id,
-        ...nuevoHistorial
-      }, ...prev]);
-      
-      // Limpiar el formulario
-      setHistorial({
-        motivo: '',
-        antecedentes: '',
-        diagnostico: '',
-        tratamiento: '',
-        observaciones: '',
-        proximaCita: ''
-      });
-      
-      alert('Historial guardado correctamente');
-    } catch (error) {
-      console.error('Error al guardar el historial:', error);
-      alert('Error al guardar el historial');
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const historialesRef = collection(db, 'historiales');
+    await addDoc(historialesRef, {
+      ...historial,
+      id_paciente: selectedPaciente.id,
+      id_medico: uidMedico,
+      fecha: serverTimestamp(),
+      pacienteNombre: `${selectedPaciente.nombre} ${selectedPaciente.apellido}`
+    });
+    
+    // Mostrar mensaje de éxito
+    alert('Historial guardado correctamente');
+    
+    // Limpiar el formulario
+    setHistorial({
+      motivo: '',
+      antecedentes: '',
+      diagnostico: '',
+      tratamiento: '',
+      observaciones: '',
+      proximaCita: ''
+    });
+  } catch (error) {
+    console.error('Error al guardar el historial:', error);
+    alert('Error al guardar el historial');
+  }
+};
 
   if (loading) return <p className="text-center py-8">Cargando pacientes...</p>;
 
@@ -234,7 +199,7 @@ const HistorialMedico = ({ uidMedico }) => {
           </div>
 
           {/* Formulario de historial médico */}
-          <form onSubmit={handleSubmit} className="space-y-4 mb-8">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Motivo de Consulta:</label>
               <textarea
@@ -243,7 +208,6 @@ const HistorialMedico = ({ uidMedico }) => {
                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500"
                 value={historial.motivo}
                 onChange={handleInputChange}
-                required
               />
             </div>
 
@@ -266,7 +230,6 @@ const HistorialMedico = ({ uidMedico }) => {
                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500"
                 value={historial.diagnostico}
                 onChange={handleInputChange}
-                required
               />
             </div>
 
@@ -322,6 +285,16 @@ const HistorialMedico = ({ uidMedico }) => {
                 Cancelar
               </button>
 
+              {selectedPaciente && (
+                <PDFDownloadLink
+                  document={<HistorialPDF paciente={selectedPaciente} historial={historial} />}
+                  fileName={`historial_${selectedPaciente.nombre}_${new Date().toISOString().slice(0, 10)}.pdf`}
+                  className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700"
+                >
+                  {({ loading }) => (loading ? 'Preparando PDF...' : 'Descargar PDF')}
+                </PDFDownloadLink>
+              )}
+
               <button
                 type="submit"
                 className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700"
@@ -330,42 +303,6 @@ const HistorialMedico = ({ uidMedico }) => {
               </button>
             </div>
           </form>
-
-          {/* Lista de historiales guardados */}
-          <div className="mt-8">
-            <h3 className="text-xl font-bold text-pink-600 mb-4">Historiales Guardados</h3>
-            
-            {historialesGuardados.length === 0 ? (
-              <p className="text-center py-4 text-gray-500">No hay historiales guardados para este paciente</p>
-            ) : (
-              <div className="space-y-4">
-                {historialesGuardados.map(historial => (
-                  <div key={historial.id} className="p-4 border border-gray-200 rounded-lg">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-bold text-gray-800">
-                          {new Date(historial.fecha?.toDate()).toLocaleDateString() || 'Fecha no especificada'}
-                        </h4>
-                        <p className="text-sm text-gray-600 mb-2">
-                          <span className="font-semibold">Diagnóstico:</span> {historial.diagnostico || 'No especificado'}
-                        </p>
-                        <p className="text-sm text-gray-600 line-clamp-2">
-                          <span className="font-semibold">Tratamiento:</span> {historial.tratamiento || 'No especificado'}
-                        </p>
-                      </div>
-                      <PDFDownloadLink
-                        document={<HistorialPDF paciente={selectedPaciente} historial={historial} />}
-                        fileName={`historial_${selectedPaciente.nombre}_${historial.fecha?.toDate().toISOString().slice(0, 10) || new Date().toISOString().slice(0, 10)}.pdf`}
-                        className="px-3 py-1 bg-pink-600 text-white rounded-lg hover:bg-pink-700 text-sm"
-                      >
-                        {({ loading }) => (loading ? 'Preparando...' : 'Descargar PDF')}
-                      </PDFDownloadLink>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </>
       )}
     </div>
