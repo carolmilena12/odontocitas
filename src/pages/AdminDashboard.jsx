@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../services/firebase-config";
 import { 
   FaUsers, FaUserMd, FaChartPie, FaTeeth, 
   FaCalendarAlt, FaSignOutAlt, FaBars, FaTimes, 
@@ -19,6 +21,7 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("Inicio");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [user, setUser] = useState(null);
+  const [adminNombre, setAdminNombre] = useState("");
   const navigate = useNavigate();
 
   // Detectar cambios en el tamaño de pantalla
@@ -34,10 +37,37 @@ const AdminDashboard = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Obtener usuario del localStorage
+  // Suscribirse al estado de autenticación del usuario y obtener nombre real desde Firestore (más robusto)
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(storedUser);
+    let isMounted = true;
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        (async () => {
+          try {
+            const { doc, getDoc } = await import("firebase/firestore");
+            const { db } = await import("../services/firebase-config");
+            const userDoc = await getDoc(doc(db, "usuarios", currentUser.uid));
+            if (isMounted) {
+              if (userDoc.exists()) {
+                const data = userDoc.data();
+                setAdminNombre(data.nombre ? `${data.nombre} ${data.apellido || ''}` : "Administrador");
+              } else {
+                setAdminNombre(currentUser.displayName || "Administrador");
+              }
+            }
+          } catch (err) {
+            if (isMounted) setAdminNombre(currentUser.displayName || "Administrador");
+          }
+        })();
+      } else {
+        if (isMounted) setAdminNombre("");
+      }
+    });
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   // Menú items con sus iconos adaptados a clínica dental
@@ -167,7 +197,7 @@ const AdminDashboard = () => {
               {!isMobile && (
                 <div className="flex items-center">
                   <FaUserCircle size={20} className="text-pink-600 md:size-[24px]" />
-                  <span className="ml-2 font-medium hidden md:inline">{user?.displayName || "Administrador"}</span>
+                  <span className="ml-2 font-medium hidden md:inline">{adminNombre || "Administrador"}</span>
                 </div>
               )}
             </div>

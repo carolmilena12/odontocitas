@@ -40,14 +40,39 @@ const UsuarioDashboard = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Detectar usuario autenticado en Firebase
+  // Detectar usuario autenticado en Firebase y obtener nombre real desde Firestore (más robusto)
+  const [usuarioNombre, setUsuarioNombre] = useState("");
   useEffect(() => {
+    let isMounted = true;
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        (async () => {
+          try {
+            const { doc, getDoc } = await import("firebase/firestore");
+            const { db } = await import("../services/firebase-config");
+            const userDoc = await getDoc(doc(db, "usuarios", currentUser.uid));
+            if (isMounted) {
+              if (userDoc.exists()) {
+                const data = userDoc.data();
+                setUsuarioNombre(data.nombre ? `${data.nombre} ${data.apellido || ''}` : "Usuario");
+              } else {
+                setUsuarioNombre(currentUser.displayName || "Usuario");
+              }
+            }
+          } catch (err) {
+            if (isMounted) setUsuarioNombre(currentUser.displayName || "Usuario");
+          }
+        })();
+      } else {
+        if (isMounted) setUsuarioNombre("");
+      }
       setLoadingUser(false);
     });
-
-    return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   // Mostrar mientras carga el usuario
@@ -184,12 +209,10 @@ const UsuarioDashboard = () => {
                 <FaBell size={16} />
                 <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-rose-500"></span>
               </button>
-              {!isMobile && (
-                <div className="flex items-center">
-                  <FaUserCircle size={20} className="text-pink-600" />
-                  <span className="ml-2 font-medium hidden md:inline">{user?.displayName || "Paciente"}</span>
-                </div>
-              )}
+              <div className="flex items-center">
+                <FaUserCircle size={20} className="text-pink-600" />
+                <span className="ml-2 font-medium hidden md:inline">{usuarioNombre || "Paciente"}</span>
+              </div>
             </div>
           </div>
         </header>

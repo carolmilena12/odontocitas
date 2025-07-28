@@ -37,12 +37,38 @@ const RecepcionistaDashboard = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Suscribirse al estado de autenticación del usuario
+  // Suscribirse al estado de autenticación del usuario y obtener nombre real desde Firestore (más robusto)
+  const [recepcionistaNombre, setRecepcionistaNombre] = useState("");
   useEffect(() => {
+    let isMounted = true;
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        (async () => {
+          try {
+            const { doc, getDoc } = await import("firebase/firestore");
+            const { db } = await import("../services/firebase-config");
+            const userDoc = await getDoc(doc(db, "usuarios", currentUser.uid));
+            if (isMounted) {
+              if (userDoc.exists()) {
+                const data = userDoc.data();
+                setRecepcionistaNombre(data.nombre ? `${data.nombre} ${data.apellido || ''}` : "Recepcionista");
+              } else {
+                setRecepcionistaNombre(currentUser.displayName || "Recepcionista");
+              }
+            }
+          } catch (err) {
+            if (isMounted) setRecepcionistaNombre(currentUser.displayName || "Recepcionista");
+          }
+        })();
+      } else {
+        if (isMounted) setRecepcionistaNombre("");
+      }
     });
-    return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   // Menú items con sus iconos adaptados a clínica dental

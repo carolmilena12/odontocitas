@@ -39,22 +39,39 @@ const MedicoDashboard = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Suscribirse al estado de autenticación del usuario
+
+  // Suscribirse al estado de autenticación del usuario y obtener nombre real desde Firestore (más robusto)
   useEffect(() => {
+    let isMounted = true;
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-      localStorage.setItem("medicoNombre", currentUser.displayName || "Médico");
-    }
+        (async () => {
+          try {
+            const { doc, getDoc } = await import("firebase/firestore");
+            const { db } = await import("../services/firebase-config");
+            const userDoc = await getDoc(doc(db, "usuarios", currentUser.uid));
+            if (isMounted) {
+              if (userDoc.exists()) {
+                const data = userDoc.data();
+                setMedicoNombre(data.nombre ? `${data.nombre} ${data.apellido || ''}` : "Médico");
+              } else {
+                setMedicoNombre(currentUser.displayName || "Médico");
+              }
+            }
+          } catch (err) {
+            if (isMounted) setMedicoNombre(currentUser.displayName || "Médico");
+          }
+        })();
+      } else {
+        if (isMounted) setMedicoNombre("");
+      }
     });
-    return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
-
-// Leer nombre desde localStorage para mostrar
-useEffect(() => {
-  const nombre = localStorage.getItem("medicoNombre") || "Médico";
-  setMedicoNombre(nombre);
-}, []);
 
   // Definir los componentes con props si es necesario
   const menuItems = [
