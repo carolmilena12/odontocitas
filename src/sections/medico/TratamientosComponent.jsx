@@ -8,7 +8,9 @@ import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 const styles = StyleSheet.create({
   page: {
     padding: 30,
-    fontFamily: 'Helvetica'
+    fontFamily: 'Helvetica',
+    backgroundColor: '#fff',
+    border: '1 solid #e5e7eb'
   },
   title: {
     fontSize: 20,
@@ -31,18 +33,38 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'grey'
   }
+,
+  firma: {
+    marginTop: 40,
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#555',
+    borderTop: '1 solid #aaa',
+    paddingTop: 10
+  },
+  dentista: {
+    fontSize: 14,
+    marginBottom: 10,
+    textAlign: 'center',
+    color: '#d946ef',
+    fontWeight: 'bold'
+  },
 });
 
-// Componente para el PDF (se mantiene igual)
-const HistorialPDF = ({ paciente, historial }) => (
+export const HistorialPDF = ({ paciente, historial }) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      <Text style={styles.header}>Clínica Dental - Historial Médico</Text>
-      <Text style={styles.title}>Historial Odontológico</Text>
+      {/* Logo y nombre de la clínica */}
+      {/* Si tienes una URL de logo, puedes usar <Image src={logoUrl} style={styles.logo}/> */}
+      <View style={{ alignItems: 'center', marginBottom: 10 }}>
+        <Text style={{ fontSize: 24, color: '#d946ef', fontWeight: 'bold', marginBottom: 4 }}>CLÍNICA DENTAL</Text>
+        <Text style={styles.header}>Historial Médico Odontológico</Text>
+      </View>
 
       <View style={styles.section}>
         <Text><Text style={styles.label}>Paciente:</Text> {paciente.nombre} {paciente.apellido}</Text>
         <Text><Text style={styles.label}>Fecha:</Text> {new Date().toLocaleDateString()}</Text>
+        <Text style={styles.dentista}><Text style={styles.label}>Dentista:</Text> {historial.dentista || 'No registrado'}</Text>
       </View>
 
       <View style={styles.section}>
@@ -73,6 +95,12 @@ const HistorialPDF = ({ paciente, historial }) => (
       <View style={styles.section}>
         <Text style={{ marginBottom: 5, fontWeight: 'bold' }}>Próxima Cita:</Text>
         <Text>{historial.proximaCita || 'No programada'}</Text>
+      </View>
+
+      {/* Espacio para firma del paciente */}
+      <View style={styles.firma}>
+        <Text>Firma del paciente:</Text>
+        <Text style={{ marginTop: 30 }}></Text>
       </View>
     </Page>
   </Document>
@@ -330,42 +358,6 @@ const HistorialMedico = ({ uidMedico }) => {
               </button>
             </div>
           </form>
-
-          {/* Lista de historiales guardados */}
-          <div className="mt-8">
-            <h3 className="text-xl font-bold text-pink-600 mb-4">Historiales Guardados</h3>
-            
-            {historialesGuardados.length === 0 ? (
-              <p className="text-center py-4 text-gray-500">No hay historiales guardados para este paciente</p>
-            ) : (
-              <div className="space-y-4">
-                {historialesGuardados.map(historial => (
-                  <div key={historial.id} className="p-4 border border-gray-200 rounded-lg">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-bold text-gray-800">
-                          {new Date(historial.fecha?.toDate()).toLocaleDateString() || 'Fecha no especificada'}
-                        </h4>
-                        <p className="text-sm text-gray-600 mb-2">
-                          <span className="font-semibold">Diagnóstico:</span> {historial.diagnostico || 'No especificado'}
-                        </p>
-                        <p className="text-sm text-gray-600 line-clamp-2">
-                          <span className="font-semibold">Tratamiento:</span> {historial.tratamiento || 'No especificado'}
-                        </p>
-                      </div>
-                      <PDFDownloadLink
-                        document={<HistorialPDF paciente={selectedPaciente} historial={historial} />}
-                        fileName={`historial_${selectedPaciente.nombre}_${historial.fecha?.toDate().toISOString().slice(0, 10) || new Date().toISOString().slice(0, 10)}.pdf`}
-                        className="px-3 py-1 bg-pink-600 text-white rounded-lg hover:bg-pink-700 text-sm"
-                      >
-                        {({ loading }) => (loading ? 'Preparando...' : 'Descargar PDF')}
-                      </PDFDownloadLink>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </>
       )}
     </div>

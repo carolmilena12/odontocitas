@@ -12,6 +12,7 @@ import InicioComponent from "../sections/medico/InicioComponent";
 import PacientesComponent from "../sections/medico/PacientesComponent";
 import TratamientosComponent from "../sections/medico/TratamientosComponent";
 import CitasComponent from "../sections/medico/CitasComponent";
+import HistorialesMedicoDashboard from "../sections/medico/HistorialesMedicoDashboard";
 import { auth } from "../services/firebase-config";
 
 const MedicoDashboard = () => {
@@ -61,6 +62,7 @@ useEffect(() => {
     { name: "Pacientes", icon: <FaUsers />, component: <PacientesComponent uidMedico={usuarioActual.uid} /> },
     { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosComponent uidMedico={usuarioActual.uid} /> },
     { name: "Citas", icon: <FaCalendarAlt />, component: <CitasComponent uidMedico={usuarioActual.uid} /> },
+    { name: "Historial Médico", icon: <FaFileInvoiceDollar />, component: <HistorialesMedicoDashboard uidMedico={usuarioActual.uid} /> },
   ];
 
   // Manejar cambio de pestaña
