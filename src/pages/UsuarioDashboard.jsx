@@ -183,25 +183,7 @@ const UsuarioDashboard = () => {
                 {sidebarOpen ? <FaTimes size={16} /> : <FaBars size={16} />}
               </button>
 
-              {!isMobile ? (
-                <div className="relative">
-                  <FaSearch className="absolute left-3 top-3 text-pink-400" />
-                  <input
-                    type="text"
-                    placeholder={`Buscar en ${activeTab.toLowerCase()}...`}
-                    className="pl-10 pr-4 py-2 border rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-pink-400"
-                  />
-                </div>
-              ) : (
-                <div className="relative flex-1 mx-2">
-                  <FaSearch className="absolute left-3 top-3 text-pink-400" />
-                  <input
-                    type="text"
-                    placeholder="Buscar..."
-                    className="pl-10 pr-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-pink-400"
-                  />
-                </div>
-              )}
+              {/* Eliminado el input y el icono de búsqueda */}
             </div>
 
             <div className="flex items-center space-x-2 md:space-x-4">

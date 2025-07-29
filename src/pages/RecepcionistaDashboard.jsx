@@ -7,7 +7,7 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import logo from "../assets/logodentista.png"; // Asegúrate de tener un logo adecuado
+import logo from "../assets/logodentista.png"; 
 import { auth } from "../services/firebase-config";
 
 // Importar componentes
@@ -16,6 +16,7 @@ import PacientesComponent from "../sections/recepcionista/PacientesComponent";
 import DoctoresComponent from "../sections/recepcionista/DoctoresComponent";
 import TratamientosComponent from "../sections/recepcionista/TratamientosComponent";
 import CitasComponent from "../sections/recepcionista/CitasComponent";
+import VerificarNFC from "../sections/recepcionista/VerificarNFC";
 
 const RecepcionistaDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -77,6 +78,7 @@ const RecepcionistaDashboard = () => {
     { name: "Pacientes", icon: <FaUsers />, component: <PacientesComponent /> },
     { name: "Doctores", icon: <FaUserMd />, component: <DoctoresComponent /> },
     { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosComponent /> },
+    { name : "Verificar NFC", icon: <FaTooth />, component: <VerificarNFC /> },
     { name: "Citas", icon: <FaCalendarAlt />, component: <CitasComponent /> },
   ];
 
@@ -197,7 +199,7 @@ const RecepcionistaDashboard = () => {
               {!isMobile && (
                 <div className="flex items-center">
                   <FaUserCircle size={20} className="text-pink-600 md:size-[24px]" />
-                  <span className="ml-2 font-medium hidden md:inline">{user?.displayName || "Recepcionista"}</span>
+                  <span className="ml-2 font-medium hidden md:inline">{recepcionistaNombre || "Recepcionista"}</span>
                 </div>
               )}
             </div>
