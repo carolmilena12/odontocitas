@@ -78,14 +78,15 @@ const CitasComponent = ({ uidMedico }) => {
     }
   }, [activeFilter, citas]);
 
-  // Función para formatear la fecha correctamente
+  // Función para formatear la fecha correctamente (Bolivia)
   const formatFecha = (date) => {
     if (!(date instanceof Date)) date = new Date(date);
-    return date.toLocaleDateString('es-ES', { 
+    return date.toLocaleDateString('es-BO', { 
       weekday: 'short', 
       day: 'numeric', 
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
+      timeZone: 'America/La_Paz'
     });
   };
 

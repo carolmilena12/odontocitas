@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../services/firebase-config"; // Ajusta la ruta según tu proyecto
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 import { 
   FaUserMd, FaCalendarAlt, FaClinicMedical, FaSignOutAlt, FaBars, FaTimes, 
@@ -108,8 +109,22 @@ const UsuarioDashboard = () => {
   // Manejo clic en menú
   const handleMenuClick = (tabName) => {
     if (tabName === "Cerrar Sesión") {
-      auth.signOut();
-      navigate("/");
+      Swal.fire({
+        title: "¿Cerrar sesión?",
+        text: "¿Estás seguro que deseas salir?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Sí, salir",
+        cancelButtonText: "Cancelar"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          auth.signOut();
+          Swal.fire("Sesión cerrada", "Has salido correctamente.", "success");
+          navigate("/");
+        }
+      });
       return;
     }
     setActiveTab(tabName);

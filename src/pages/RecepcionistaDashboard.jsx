@@ -6,6 +6,7 @@ import {
   FaTooth, FaClinicMedical, FaFileInvoiceDollar
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import { onAuthStateChanged } from "firebase/auth";
 import logo from "../assets/logodentista.png"; 
 import { auth } from "../services/firebase-config";
@@ -14,7 +15,6 @@ import { auth } from "../services/firebase-config";
 import InicioComponent from "../sections/recepcionista/InicioComponent";
 import PacientesComponent from "../sections/recepcionista/PacientesComponent";
 import DoctoresComponent from "../sections/recepcionista/DoctoresComponent";
-import TratamientosComponent from "../sections/recepcionista/TratamientosComponent";
 import CitasComponent from "../sections/recepcionista/CitasComponent";
 import VerificarNFC from "../sections/recepcionista/VerificarNFC";
 
@@ -77,7 +77,6 @@ const RecepcionistaDashboard = () => {
     { name: "Inicio", icon: <FaHome />, component: <InicioComponent /> },
     { name: "Pacientes", icon: <FaUsers />, component: <PacientesComponent /> },
     { name: "Doctores", icon: <FaUserMd />, component: <DoctoresComponent /> },
-    { name: "Tratamientos", icon: <FaTeeth />, component: <TratamientosComponent /> },
     { name : "Verificar NFC", icon: <FaTooth />, component: <VerificarNFC /> },
     { name: "Citas", icon: <FaCalendarAlt />, component: <CitasComponent /> },
   ];
@@ -95,8 +94,22 @@ const RecepcionistaDashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("/");
+    Swal.fire({
+      title: "¿Cerrar sesión?",
+      text: "¿Estás seguro que deseas salir?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, salir",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.clear();
+        Swal.fire("Sesión cerrada", "Has salido correctamente.", "success");
+        navigate("/");
+      }
+    });
   };
 
   return (

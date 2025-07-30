@@ -94,7 +94,7 @@ export const HistorialPDF = ({ paciente, historial }) => (
 
       <View style={styles.section}>
         <Text style={{ marginBottom: 5, fontWeight: 'bold' }}>Próxima Cita:</Text>
-        <Text>{historial.proximaCita || 'No programada'}</Text>
+        <Text>{historial.proximaCita ? new Date(historial.proximaCita + 'T00:00:00').toLocaleDateString('es-BO') : 'No programada'}</Text>
       </View>
 
       {/* Espacio para firma del paciente */}
@@ -328,6 +328,7 @@ const HistorialMedico = ({ uidMedico }) => {
                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500"
                 value={historial.proximaCita}
                 onChange={handleInputChange}
+                lang="es-BO"
               />
             </div>
 

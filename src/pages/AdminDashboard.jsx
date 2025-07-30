@@ -8,6 +8,7 @@ import {
   FaTooth, FaClinicMedical, FaFileInvoiceDollar
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import logo from "../assets/logodentista.png";
 import InicioAdmin from "../sections/administrador/InicioAdmin";
 import RegistroUsuarios from "../sections/administrador/RegistroUsuarios";
@@ -93,8 +94,22 @@ const AdminDashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("/");
+    Swal.fire({
+      title: "¿Cerrar sesión?",
+      text: "¿Estás seguro que deseas salir?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, salir",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.clear();
+        Swal.fire("Sesión cerrada", "Has salido correctamente.", "success");
+        navigate("/");
+      }
+    });
   };
 
   return (

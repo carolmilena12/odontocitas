@@ -6,6 +6,7 @@ import {
   FaTooth, FaClinicMedical, FaFileInvoiceDollar
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import { onAuthStateChanged } from "firebase/auth";
 import logo from "../assets/logodentista.png"; // Asegúrate de tener un logo adecuado
 import InicioComponent from "../sections/medico/InicioComponent";
@@ -73,7 +74,6 @@ const MedicoDashboard = () => {
     };
   }, []);
 
-  // Definir los componentes con props si es necesario
   const menuItems = [
     { name: "Inicio", icon: <FaHome />, component: <InicioComponent /> },
     { name: "Pacientes", icon: <FaUsers />, component: <PacientesComponent uidMedico={usuarioActual.uid} /> },
@@ -95,8 +95,22 @@ const MedicoDashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("/");
+    Swal.fire({
+      title: "¿Cerrar sesión?",
+      text: "¿Estás seguro que deseas salir?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, salir",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.clear();
+        Swal.fire("Sesión cerrada", "Has salido correctamente.", "success");
+        navigate("/");
+      }
+    });
   };
 
   return (

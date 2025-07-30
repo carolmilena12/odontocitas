@@ -11,29 +11,37 @@ export const registrarUsuario = async ({
   fechaNacimiento,
   telefono,
   direccion,
-  matricula
+  matricula,
+  imagen // URL de Cloudinary
 }) => {
-  const nuevoUsuario = await createUserWithEmailAndPassword(auth, email, password);
-  const uid = nuevoUsuario.user.uid;
+  try {
+    const nuevoUsuario = await createUserWithEmailAndPassword(auth, email, password);
+    const uid = nuevoUsuario.user.uid;
 
-  const datosUsuario = {
-    email,
-    nombre,
-    rol,
-    identificacion,
-    fechaNacimiento,
-    telefono,
-    direccion
-  };
+    const datosUsuario = {
+      email,
+      nombre,
+      rol,
+      identificacion,
+      fechaNacimiento,
+      telefono,
+      direccion,
+      uid,
+      imagen: rol === "medico" ? imagen : null // Solo médicos tienen imagen
+    };
 
-  if (rol === "medico" && matricula) {
-    datosUsuario.matricula = matricula;
+    if (rol === "medico") {
+      datosUsuario.matricula = matricula;
+    }
+
+    await setDoc(doc(db, "usuarios", uid), datosUsuario);
+
+    // Reautenticar al admin si es necesario
+    await signInWithEmailAndPassword(auth, "administrador@gmail.com", "admin1234");
+
+    return uid;
+  } catch (error) {
+    console.error("Error en registrarUsuario:", error);
+    throw error;
   }
-
-  await setDoc(doc(db, "usuarios", uid), datosUsuario);
-
-  // Reautenticar al administrador
-  await signInWithEmailAndPassword(auth, "administrador@gmail.com", "admin1234");
-
-  return uid;
 };

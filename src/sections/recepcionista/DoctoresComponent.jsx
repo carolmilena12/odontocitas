@@ -1,103 +1,118 @@
-// src/pages/DoctoresComponent.jsx
 import React, { useEffect, useState } from "react";
 import { collection, getDocs, query, where, deleteDoc, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../services/firebase-config";
 
+const obtenerImagenMedico = (doctor) => {
+  if (!doctor) return '/doctores/default.jpeg';
+  if (doctor.imagenKey) {
+    const imagen = localStorage.getItem(doctor.imagenKey);
+    if (imagen) return imagen;
+  }
+  if (doctor.imagen) return doctor.imagen;
+  return '/doctores/default.jpeg';
+};
+
+const DoctorCard = ({ doctor, onEdit, onDelete }) => {
+  const imagenSrc = obtenerImagenMedico(doctor);
+  
+  return (
+    <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center gap-3 border border-pink-100">
+      <div className="relative w-32 h-32 mb-3">
+        <img
+          src={imagenSrc}
+          alt={`Dr. ${doctor.nombre}`}
+          className="w-full h-full object-cover rounded-full border-4 border-pink-200"
+          onError={(e) => e.target.src = '/doctores/default.jpeg'}
+        />
+      </div>
+      <h3 className="font-bold text-pink-800 text-lg text-center">Dr. {doctor.nombre}</h3>
+      {/* <p className="text-sm text-pink-500 font-medium">{doctor.especialidad || 'Odontología General'}</p> */}
+      {/* <div className="flex gap-2 mt-2">
+        <button
+          onClick={() => onEdit(doctor.id)}
+          className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm transition"
+        >
+          Editar
+        </button>
+        <button
+          onClick={() => onDelete(doctor.id)}
+          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm transition"
+        >
+          Eliminar
+        </button>
+      </div> */}
+    </div>
+  );
+};
+
 const DoctoresComponent = () => {
   const [doctores, setDoctores] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchDoctores = async () => {
+      try {
+        const doctoresRef = collection(db, "usuarios");
+        const q = query(doctoresRef, where("rol", "==", "medico"));
+        const querySnapshot = await getDocs(q);
+        setDoctores(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } catch (error) {
+        console.error("Error al obtener doctores:", error);
+        setError("Error al cargar los doctores");
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchDoctores();
   }, []);
 
-  const fetchDoctores = async () => {
-    setLoading(true);
-    try {
-      const doctoresRef = collection(db, "usuarios");
-      const q = query(doctoresRef, where("rol", "==", "medico"));
-      const querySnapshot = await getDocs(q);
-
-      const data = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      setDoctores(data);
-    } catch (error) {
-      console.error("Error al obtener doctores:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRegistrar = () => {
-    navigate("/registro-doctor");
-  };
-
+  const handleRegistrar = () => navigate("/registro-doctor");
   const handleEliminar = async (id) => {
-    const confirmacion = window.confirm("¿Estás seguro de eliminar este doctor?");
-    if (!confirmacion) return;
-
+    if (!window.confirm("¿Estás seguro de eliminar este doctor?")) return;
     try {
       await deleteDoc(doc(db, "usuarios", id));
       setDoctores(prev => prev.filter(d => d.id !== id));
     } catch (error) {
       console.error("Error al eliminar doctor:", error);
-      alert("❌ No se pudo eliminar el doctor.");
+      setError("No se pudo eliminar el doctor");
     }
   };
-
-  const handleEditar = (id) => {
-    navigate(`/editar-doctor/${id}`);
-  };
+  // const handleEditar = (id) => navigate(`/editar-doctor/${id}`);
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-pink-700">Doctores registrados</h2>
+    <div className="bg-white p-6 rounded-xl shadow-sm max-w-6xl mx-auto">
+      {/* <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-pink-800 border-b pb-2">Administración de Doctores</h2>
         <button
           onClick={handleRegistrar}
-          className="bg-pink-500 text-white px-4 py-2 rounded-lg shadow hover:bg-pink-600 transition"
+          className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg font-semibold transition"
         >
-          Registrar doctor
+          Registrar Nuevo Doctor
         </button>
-      </div>
+      </div> */}
 
       {loading ? (
-        <p className="text-pink-500">Cargando doctores...</p>
-      ) : doctores.length === 0 ? (
-        <p className="text-gray-500">No se encontraron doctores registrados.</p>
+        <div className="flex justify-center items-center h-40">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500"></div>
+        </div>
+      ) : error ? (
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded">
+          <p>{error}</p>
+        </div>
       ) : (
-        <ul className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {doctores.map((doctor) => (
-            <li
-              key={doctor.id}
-              className="border border-pink-100 bg-pink-50 p-4 rounded-lg shadow-sm flex justify-between items-center"
-            >
-              <div>
-                <p><strong>Nombre:</strong> {doctor.nombre}</p>
-                <p><strong>Email:</strong> {doctor.email}</p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleEditar(doctor.id)}
-                  className="bg-yellow-400 text-white px-3 py-1 rounded-lg text-sm hover:bg-yellow-500 transition"
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => handleEliminar(doctor.id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-600 transition"
-                >
-                  Eliminar
-                </button>
-              </div>
-            </li>
+            <DoctorCard 
+              key={doctor.id} 
+              doctor={doctor} 
+              // onEdit={handleEditar}
+              // onDelete={handleEliminar}
+            />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

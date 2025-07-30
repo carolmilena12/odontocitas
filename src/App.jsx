@@ -7,7 +7,6 @@ import UsuarioDasboard from './pages/UsuarioDashboard';
 import MedicoDasboard from './pages/MedicoDashboard';
 import RecepcionistaDashboard from './pages/RecepcionistaDashboard';
 import RegistroPaciente from './pages/RegistroPaciente';
-
 import ListaUsuarios from './pages/ListaUsuarios';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
