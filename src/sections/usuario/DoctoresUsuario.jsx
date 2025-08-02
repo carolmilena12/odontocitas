@@ -2,26 +2,19 @@ import React, { useEffect, useState } from "react";
 import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
 import { db } from "../../services/firebase-config";
 
-// Función auxiliar para obtener la imagen del médico
-const obtenerImagenMedico = (doctor) => {
-  if (!doctor) return '/doctores/default.jpeg';
-  if (doctor.imagen) return doctor.imagen; // Usa la URL de Cloudinary
-  return '/doctores/default.jpeg';
-};
-
 // Componente individual de tarjeta de doctor
 const DoctorCard = ({ doctor, onShowModal }) => {
-  const imagenSrc = obtenerImagenMedico(doctor);
+    const defaultImage = 'https://res.cloudinary.com/dlllvqdzd/image/upload/v1753993361/v8eahooxylinnfulpria.jpg';
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center gap-3 border border-pink-100 transition-transform hover:scale-105">
       <div className="relative w-32 h-32 mb-3">
         <img
-          src={imagenSrc}
+          src={doctor.imagen || defaultImage}
           alt={`Dr. ${doctor.nombre}`}
           className="w-full h-full object-cover rounded-full border-4 border-pink-200"
           onError={(e) => {
-            e.target.src = '/doctores/default.jpeg';
+            e.target.src = defaultImage;
           }}
         />
       </div>
@@ -203,11 +196,11 @@ const DoctoresUsuario = ({ uidUsuario }) => {
             <div className="flex flex-col items-center mb-6">
               <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-pink-200 mb-3">
                 <img
-                  src={obtenerImagenMedico(selectedDoctor)}
+                  src={selectedDoctor.imagen || defaultImage}
                   alt={`Dr. ${selectedDoctor.nombre}`}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.target.src = '/doctores/default.jpeg';
+                    e.target.src = defaultImage;
                   }}
                 />
               </div>

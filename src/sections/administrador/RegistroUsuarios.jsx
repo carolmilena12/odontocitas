@@ -23,53 +23,55 @@ const RegistroUsuarios = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFotoChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+const handleFotoChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    // Validar tipo de archivo
-    const validTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      setMensaje("❌ Solo se permiten imágenes JPG, PNG o WEBP");
-      return;
-    }
+  // Validaciones
+  const validTypes = ["image/jpeg", "image/png", "image/webp"];
+  if (!validTypes.includes(file.type)) {
+    setMensaje("❌ Solo se permiten imágenes JPG, PNG o WEBP");
+    return;
+  }
 
-    // Validar tamaño (2MB máximo)
-    if (file.size > 2 * 1024 * 1024) {
-      setMensaje("❌ La imagen no debe superar los 2MB");
-      return;
-    }
+  if (file.size > 2 * 1024 * 1024) {
+    setMensaje("❌ La imagen no debe superar los 2MB");
+    return;
+  }
 
-    setIsUploading(true);
-    setMensaje("Subiendo imagen...");
+  setIsUploading(true);
+  setMensaje("Subiendo imagen...");
 
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+  try {
+    const uploadData = new FormData();
+    uploadData.append("file", file);
+    uploadData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    uploadData.append("folder", "doctores"); // Organizar en carpeta
+    uploadData.append("use_filename", "true"); // Mantener nombre original
+    uploadData.append("unique_filename", "true"); // Evitar duplicados
 
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: uploadData,
+      }
+    );
 
-      if (!response.ok) throw new Error("Error al subir la imagen");
+    if (!response.ok) throw new Error("Error al subir la imagen");
 
-      const data = await response.json();
-      setFotoPreview(data.secure_url);
-      setFormData(prev => ({ ...prev, imagen: data.secure_url }));
-      setMensaje("✅ Imagen subida correctamente");
-    } catch (error) {
-      console.error("Error:", error);
-      setMensaje(`❌ ${error.message}`);
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
+    const data = await response.json();
+    setFotoPreview(data.secure_url);
+    setFormData(prev => ({ ...prev, imagen: data.secure_url }));
+    setMensaje("✅ Imagen subida correctamente");
+  } catch (error) {
+    console.error("Error:", error);
+    setMensaje(`❌ Error al subir imagen: ${error.message}`);
+    setFotoPreview(""); // Limpiar preview en caso de error
+  } finally {
+    setIsUploading(false);
+  }
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsUploading(true);
@@ -183,7 +185,7 @@ const RegistroUsuarios = () => {
               required 
             />
           </div>
-          
+              
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de nacimiento</label>
             <input 
