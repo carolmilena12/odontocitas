@@ -16,7 +16,7 @@ import InicioComponent from "../sections/recepcionista/InicioComponent";
 import PacientesComponent from "../sections/recepcionista/PacientesComponent";
 import DoctoresComponent from "../sections/recepcionista/DoctoresComponent";
 import CitasComponent from "../sections/recepcionista/CitasComponent";
-import VerificarNFC from "../sections/recepcionista/VerificarNFC";
+import LecturaNFC from "../sections/recepcionista/LecturaNFC";
 
 const RecepcionistaDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -77,7 +77,7 @@ const RecepcionistaDashboard = () => {
     { name: "Inicio", icon: <FaHome />, component: <InicioComponent /> },
     { name: "Pacientes", icon: <FaUsers />, component: <PacientesComponent /> },
     { name: "Doctores", icon: <FaUserMd />, component: <DoctoresComponent /> },
-    { name : "Verificar NFC", icon: <FaTooth />, component: <VerificarNFC /> },
+    { name: "Lectura NFC", icon: <FaTooth />, component: <LecturaNFC /> },
     { name: "Citas", icon: <FaCalendarAlt />, component: <CitasComponent /> },
   ];
 
