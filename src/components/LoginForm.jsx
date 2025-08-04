@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { loginUser } from '../services/firebase-auth';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import dentalIcon from '../assets/logodentista.png'; // Asegúrate de tener esta imagen en tu carpeta assets
+import dentalIcon from '../assets/logodentista.png';
 
 function LoginForm() {
   const [username, setUsername] = useState('');

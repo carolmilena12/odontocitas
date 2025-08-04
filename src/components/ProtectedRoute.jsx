@@ -5,7 +5,6 @@ import { getAuth } from 'firebase/auth';
 /**
  * Componente para proteger rutas según autenticación.
  * Si no hay usuario autenticado, redirige al login.
- * Puedes extenderlo para roles si lo necesitas.
  */
 export default function ProtectedRoute({ children }) {
   const location = useLocation();

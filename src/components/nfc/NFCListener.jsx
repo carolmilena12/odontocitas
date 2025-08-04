@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import PacienteInfo from './PacienteInfo'; // Ajustá el path según tu estructura
+import PacienteInfo from './PacienteInfo';
 
 const NFCListener = () => {
   const [cardId, setCardId] = useState(null);

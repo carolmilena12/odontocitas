@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { db } from "../../services/firebase-config";
 
 const obtenerImagenMedico = (doctor) => {
-  if (!doctor) return '/doctores/default.jpeg';
+  if (!doctor) return 'https://res.cloudinary.com/dlllvqdzd/image/upload/v1753993361/v8eahooxylinnfulpria.jpg';
   if (doctor.imagenKey) {
     const imagen = localStorage.getItem(doctor.imagenKey);
     if (imagen) return imagen;
   }
   if (doctor.imagen) return doctor.imagen;
-  return '/doctores/default.jpeg';
+  return 'https://res.cloudinary.com/dlllvqdzd/image/upload/v1753993361/v8eahooxylinnfulpria.jpg';
 };
 
 const DoctorCard = ({ doctor, onEdit, onDelete }) => {

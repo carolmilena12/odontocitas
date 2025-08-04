@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
 import { db } from "../../services/firebase-config";
 
-// Componente individual de tarjeta de doctor
-const DoctorCard = ({ doctor, onShowModal }) => {
-    const defaultImage = 'https://res.cloudinary.com/dlllvqdzd/image/upload/v1753993361/v8eahooxylinnfulpria.jpg';
+const defaultImage = 'https://res.cloudinary.com/dlllvqdzd/image/upload/v1753993361/v8eahooxylinnfulpria.jpg';
 
+const DoctorCard = ({ doctor, onShowModal }) => {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center gap-3 border border-pink-100 transition-transform hover:scale-105">
       <div className="relative w-32 h-32 mb-3">
@@ -30,7 +29,6 @@ const DoctorCard = ({ doctor, onShowModal }) => {
   );
 };
 
-// Componente principal
 const DoctoresUsuario = ({ uidUsuario }) => {
   const [doctores, setDoctores] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -38,9 +36,10 @@ const DoctoresUsuario = ({ uidUsuario }) => {
   const [especialidadElegida, setEspecialidadElegida] = useState("");
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
-  const [citaAgendada, setCitaAgendada] = useState(null);
   const [loading, setLoading] = useState({ doctores: true, cita: false });
   const [error, setError] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const timeoutRef = useRef(null);
 
   useEffect(() => {
     const fetchDoctores = async () => {
@@ -62,6 +61,12 @@ const DoctoresUsuario = ({ uidUsuario }) => {
     };
 
     fetchDoctores();
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, []);
 
   const generateTimeSlots = () => {
@@ -87,7 +92,7 @@ const DoctoresUsuario = ({ uidUsuario }) => {
     setModalOpen(true);
     setFecha("");
     setHora("");
-    setCitaAgendada(null);
+    setShowSuccess(false);
     setError(null);
   };
 
@@ -139,12 +144,14 @@ const DoctoresUsuario = ({ uidUsuario }) => {
         estado: "pendiente"
       };
 
-      const docRef = await addDoc(collection(db, "citas"), nuevaCita);
-      setCitaAgendada({ ...nuevaCita, id: docRef.id });
-
-      setTimeout(() => {
+      await addDoc(collection(db, "citas"), nuevaCita);
+      setShowSuccess(true);
+      
+      timeoutRef.current = setTimeout(() => {
         setModalOpen(false);
+        setShowSuccess(false);
       }, 2000);
+      
     } catch (err) {
       console.error("Error al agendar cita:", err);
       setError("Error al procesar la cita. Intenta nuevamente.");
@@ -182,7 +189,7 @@ const DoctoresUsuario = ({ uidUsuario }) => {
         </div>
       )}
 
-      {modalOpen && selectedDoctor && (
+      {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md relative">
             <button
@@ -193,108 +200,115 @@ const DoctoresUsuario = ({ uidUsuario }) => {
               &times;
             </button>
 
-            <div className="flex flex-col items-center mb-6">
-              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-pink-200 mb-3">
-                <img
-                  src={selectedDoctor.imagen || defaultImage}
-                  alt={`Dr. ${selectedDoctor.nombre}`}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.src = defaultImage;
-                  }}
-                />
+            {showSuccess ? (
+              <div className="text-center py-8">
+                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                  <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-1">¡Cita agendada con éxito!</h3>
+                <p className="text-sm text-gray-500">
+                  Dr. {selectedDoctor.nombre}<br />
+                  {fecha} a las {hora}
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-pink-800">Dr. {selectedDoctor.nombre}</h3>
-              <p className="text-pink-600">{selectedDoctor.especialidad || 'Odontología General'}</p>
-            </div>
+            ) : (
+              <>
+                {selectedDoctor && (
+                  <>
+                    <div className="flex flex-col items-center mb-6">
+                      <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-pink-200 mb-3">
+                        <img
+                          src={selectedDoctor.imagen || defaultImage}
+                          alt={`Dr. ${selectedDoctor.nombre}`}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.src = defaultImage;
+                          }}
+                        />
+                      </div>
+                      <h3 className="text-xl font-bold text-pink-800">Dr. {selectedDoctor.nombre}</h3>
+                      <p className="text-pink-600">{selectedDoctor.especialidad || 'Odontología General'}</p>
+                    </div>
 
-            {error && (
-              <div className="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded">
-                <p>{error}</p>
-              </div>
-            )}
+                    {error && (
+                      <div className="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded">
+                        <p>{error}</p>
+                      </div>
+                    )}
 
-            <form onSubmit={handleAgendarCita} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Especialidad</label>
-                <select
-                  className="w-full p-3 border border-pink-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                  value={especialidadElegida}
-                  onChange={(e) => setEspecialidadElegida(e.target.value)}
-                  required
-                  disabled={loading.cita}
-                >
-                  <option value="Odontología General">Odontología General</option>
-                  <option value="Endodoncia">Endodoncia</option>
-                  <option value="Ortodoncia">Ortodoncia</option>
-                  <option value="Periodoncia">Periodoncia</option>
-                  <option value="Estética Dental">Estética Dental</option>
-                </select>
-              </div>
+                    <form onSubmit={handleAgendarCita} className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Especialidad</label>
+                        <select
+                          className="w-full p-3 border border-pink-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          value={especialidadElegida}
+                          onChange={(e) => setEspecialidadElegida(e.target.value)}
+                          required
+                          disabled={loading.cita}
+                        >
+                          <option value="Odontología General">Odontología General</option>
+                          <option value="Endodoncia">Endodoncia</option>
+                          <option value="Ortodoncia">Ortodoncia</option>
+                          <option value="Periodoncia">Periodoncia</option>
+                          <option value="Estética Dental">Estética Dental</option>
+                        </select>
+                      </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
-                <input
-                  type="date"
-                  min={getMinDate()}
-                  className="w-full p-3 border border-pink-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                  value={fecha}
-                  onChange={(e) => setFecha(e.target.value)}
-                  required
-                  disabled={loading.cita}
-                />
-              </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+                        <input
+                          type="date"
+                          min={getMinDate()}
+                          className="w-full p-3 border border-pink-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          value={fecha}
+                          onChange={(e) => setFecha(e.target.value)}
+                          required
+                          disabled={loading.cita}
+                        />
+                      </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Hora</label>
-                <select
-                  className="w-full p-3 border border-pink-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                  value={hora}
-                  onChange={(e) => setHora(e.target.value)}
-                  required
-                  disabled={loading.cita}
-                >
-                  <option value="">Selecciona una hora</option>
-                  {timeSlots.map((slot) => (
-                    <option key={slot.value} value={slot.value}>
-                      {slot.display}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Hora</label>
+                        <select
+                          className="w-full p-3 border border-pink-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          value={hora}
+                          onChange={(e) => setHora(e.target.value)}
+                          required
+                          disabled={loading.cita}
+                        >
+                          <option value="">Selecciona una hora</option>
+                          {timeSlots.map((slot) => (
+                            <option key={slot.value} value={slot.value}>
+                              {slot.display}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-              <button
-                type="submit"
-                className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50"
-                disabled={loading.cita}
-              >
-                {loading.cita ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Procesando...
-                  </span>
-                ) : (
-                  "Confirmar Cita"
+                      <button
+                        type="submit"
+                        className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50"
+                        disabled={loading.cita}
+                      >
+                        {loading.cita ? (
+                          <span className="flex items-center justify-center">
+                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Procesando...
+                          </span>
+                        ) : (
+                          "Confirmar Cita"
+                        )}
+                      </button>
+                    </form>
+                  </>
                 )}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {citaAgendada && (
-        <div className="fixed bottom-6 right-6 z-50 bg-pink-600 text-white px-6 py-3 rounded-xl shadow-lg animate-fade-in-up">
-          <div className="flex items-center">
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            <div>
-              <p className="font-bold">¡Cita agendada con éxito!</p>
-              <p className="text-sm">Dr. {citaAgendada.doctor} - {citaAgendada.fecha} a las {citaAgendada.hora}</p>
-            </div>
+              </>
+            )}
           </div>
         </div>
       )}

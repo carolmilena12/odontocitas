@@ -10,7 +10,7 @@ const obtenerImagenMedico = (doctor) => {
     if (imagen) return imagen;
   }
   if (doctor.imagen) return doctor.imagen;
-  return '/doctores/default.jpeg';
+  return 'https://res.cloudinary.com/dlllvqdzd/image/upload/v1753993361/v8eahooxylinnfulpria.jpg';
 };
 
 const DoctorCard = ({ doctor, onEdit, onDelete }) => {
@@ -23,7 +23,7 @@ const DoctorCard = ({ doctor, onEdit, onDelete }) => {
           src={imagenSrc}
           alt={`Dr. ${doctor.nombre}`}
           className="w-full h-full object-cover rounded-full border-4 border-pink-200"
-          onError={(e) => e.target.src = '/doctores/default.jpeg'}
+          onError={(e) => e.target.src = 'https://res.cloudinary.com/dlllvqdzd/image/upload/v1753993361/v8eahooxylinnfulpria.jpg'}
         />
       </div>
       <h3 className="font-bold text-pink-800 text-lg text-center">Dr. {doctor.nombre}</h3>

@@ -1,12 +1,12 @@
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { collection, query, where } from 'firebase/firestore';
-import { db } from '../../services/firebase-config'; // ¡ruta y nombre ajustados!
+import { db } from '../../services/firebase-config';
 
 const PacienteInfo = ({ cardId }) => {
   const pacientesQuery = query(
     collection(db, 'usuarios'),
     where('nfc', '==', cardId),
-    where('rol', '==', 'paciente') // solo pacientes
+    where('rol', '==', 'paciente') // solo rol de paciente 
   );
 
   const [docs, loading, error] = useCollectionData(pacientesQuery);
