@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs, query, where, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../services/firebase-config";
+import Swal from "sweetalert2";
+import {toast} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+
 
 const CitasUsuario = ({ uidUsuario }) => {
   const [citas, setCitas] = useState([]);
@@ -33,13 +37,26 @@ const CitasUsuario = ({ uidUsuario }) => {
   }, [uidUsuario]);
 
   const eliminarCita = async (idCita) => {
-    if (!window.confirm("¿Seguro que deseas cancelar esta cita?")) return;
+    const result = await Swal.fire({
+      title: "¿Cancelar cita?",
+      text: "¿Estás seguro de que deseas cancelar esta cita?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, cancelar",
+      cancelButtonText: "No, mantener",
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await deleteDoc(doc(db, "citas", idCita));
       setCitas(prevCitas => prevCitas.filter(cita => cita.id_cita !== idCita));
+      toast.success("Cita cancelada exitosamente");
     } catch (error) {
-      alert("Hubo un error al eliminar la cita.");
       console.error("Error eliminando cita:", error);
+      toast.error("Hubo un error al cancelar la cita");
     }
   };
 
