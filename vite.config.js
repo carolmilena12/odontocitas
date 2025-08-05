@@ -16,9 +16,11 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       // Configuración básica
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       devOptions: {
-        enabled: true // Habilita PWA en desarrollo (opcional)
+        enabled: true,
+        type: 'module',
+        navigateFallback: '/index.html',
       },
 
       // Workbox: Solución para el error de tamaño de archivo
@@ -53,13 +55,13 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: 'web-app-manifest-192x192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable',
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'web-app-manifest-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable',
