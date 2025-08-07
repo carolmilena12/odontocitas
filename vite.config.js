@@ -15,65 +15,21 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      // Configuración básica
       registerType: 'autoUpdate',
-      devOptions: {
-        enabled: true // Habilita PWA en desarrollo (opcional)
-      },
-
-      // Workbox: Solución para el error de tamaño de archivo
-      workbox: {
-        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB
-        globPatterns: [
-          '**/*.{js,css,html,ico,png,svg,json,woff2,ttf}', // Archivos a cachear
-        ],
-        runtimeCaching: [
-          {
-            urlPattern: ({ request }) => request.destination === 'image',
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'images-cache',
-              expiration: {
-                maxEntries: 50, // Máximo 50 imágenes en caché
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días
-              },
-            },
-          },
-        ],
-      },
-
-      // Manifest: No necesitas crear el archivo manualmente
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
       manifest: {
         name: 'OdontoCitas',
-        short_name: 'OdontoCitas',
-        description: 'Aplicación de gestión de citas odontológicas',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
-        display: 'standalone',
+        short_name: 'MySite',
+        description: 'Mi sitio web de odontologia',
         start_url: '/',
-        icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any maskable',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable',
-          },
-        ],
+        display: 'standalone',
+        background_color: '#ffffff',
+        theme_color: '#228be6',
       },
-
-      // Opcional: Precaché de archivos críticos
-      includeAssets: [
-        'favicon.ico',
-        'robots.txt',
-        'apple-touch-icon.png',
-        'src/assets/**', // Incluye assets importantes
-      ],
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5000000, // Increase cache limit to 5MB
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+      }
     }),
   ],
 });
