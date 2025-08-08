@@ -4,7 +4,8 @@ import LoginForm from '../components/LoginForm';
 
 function LoginPage() {
   return (
-    <div style={{ margin: '2rem' }}>
+    <div       style={{ backgroundImage: "url('/login-bg.jpeg')" }}
+      className="flex items-center justify-center">
       <LoginForm />
     </div>
   );

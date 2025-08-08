@@ -50,7 +50,7 @@ const handleSubmit = async (e) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-rose-50 px-4"
+      className="min-h-screen flex items-center justify-center "
     >
       <motion.form
         initial={{ y: -20, opacity: 0 }}
