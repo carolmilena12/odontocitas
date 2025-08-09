@@ -15,8 +15,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      // Configuración básica
       registerType: 'autoUpdate',
+<<<<<<< HEAD
       devOptions: {
         enabled: true // Habilita PWA en desarrollo (opcional)
       },
@@ -43,14 +43,15 @@ export default defineConfig({
       },
 
       
+=======
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
+>>>>>>> 574eaf976a90c3463ec16922e36a05879316f78f
       manifest: {
         name: 'OdontoCitas',
-        short_name: 'OdontoCitas',
-        description: 'Aplicación de gestión de citas odontológicas',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
-        display: 'standalone',
+        short_name: 'MySite',
+        description: 'Mi sitio web de odontologia',
         start_url: '/',
+<<<<<<< HEAD
         icons: [
           {
             src: 'web-app-manifest-192x192.png',
@@ -65,15 +66,16 @@ export default defineConfig({
             purpose: 'any maskable',
           },
         ],
+=======
+        display: 'standalone',
+        background_color: '#ffffff',
+        theme_color: '#228be6',
+>>>>>>> 574eaf976a90c3463ec16922e36a05879316f78f
       },
-
-      // Opcional: Precaché de archivos críticos
-      includeAssets: [
-        'favicon.ico',
-        'robots.txt',
-        'apple-touch-icon.png',
-        'src/assets/**', // Incluye assets importantes
-      ],
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5000000, // Increase cache limit to 5MB
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+      }
     }),
   ],
 });
